@@ -215,10 +215,70 @@
     .mode-btn { transition: background .15s, color .15s, border-color .15s; }
     .mode-btn.on { background: var(--accent); color: #0d1117; border-color: var(--accent); }
 
-    @media (max-width: 640px)
+    /* ── Responsive ─────────────────────────────────────────────────────── */
+
+    /* Epoch table scroll wrapper */
+    .table-scroll { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+
+    /* Tablet — stack columns, tighten padding */
+    @media (max-width: 768px)
     {
-      .row { flex-direction: column; }
       .content { padding: 16px; }
+      .col { min-width: 100%; }
+      .row { flex-direction: column; }
+    }
+
+    /* Mobile — full responsive overhaul */
+    @media (max-width: 480px)
+    {
+      /* Header */
+      header { padding: 10px 14px; }
+      header h1 { font-size: 1rem; }
+
+      /* Tabs — scroll horizontally, no wrap */
+      .tabs
+      {
+        padding: 0 8px;
+        gap: 0;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: none;
+      }
+      .tabs::-webkit-scrollbar { display: none; }
+      .tab { padding: 10px 14px; font-size: 0.82rem; white-space: nowrap; flex-shrink: 0; }
+
+      /* Content */
+      .content { padding: 12px; }
+      h2 { font-size: 0.95rem; }
+      .subtitle { font-size: 0.78rem; }
+
+      /* Inputs */
+      input[type="text"],
+      input[type="number"],
+      textarea,
+      select { font-size: 0.85rem; padding: 7px 10px; }
+
+      /* Buttons */
+      .btn { padding: 8px 14px; font-size: 0.82rem; }
+      .btn-group { gap: 6px; }
+
+      /* Drop zone — compact on mobile */
+      .drop-zone { padding: 14px 12px; }
+      .drop-zone svg { width: 22px; height: 22px; margin-bottom: 6px; }
+
+      /* Result */
+      .result { max-height: 280px; font-size: 0.78rem; padding: 10px 36px 10px 10px; }
+
+      /* Copy button — keep it out of the way */
+      .copy-btn { padding: 2px 8px; font-size: 0.7rem; top: 6px; right: 6px; }
+
+      /* Diff */
+      .diff-out { max-height: 360px; }
+      .diff-line { font-size: 0.75rem; padding: 1px 10px; }
+
+      /* Epoch table */
+      .epoch-table th,
+      .epoch-table td { padding: 7px 10px; font-size: 0.82rem; }
     }
   </style>
 </head>
@@ -311,10 +371,12 @@
           <button class="btn" id="btn-epoch-clear">Clear</button>
         </div>
         <div id="epoch-result-wrap" style="display:none">
-          <table class="epoch-table">
-            <thead><tr><th>Format</th><th>Value</th></tr></thead>
-            <tbody id="epoch-rows"></tbody>
-          </table>
+          <div class="table-scroll">
+            <table class="epoch-table">
+              <thead><tr><th>Format</th><th>Value</th></tr></thead>
+              <tbody id="epoch-rows"></tbody>
+            </table>
+          </div>
         </div>
       </div>
 
