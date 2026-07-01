@@ -5,6 +5,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>NCM Lab</title>
   <script>(function(){var t=localStorage.getItem('ncm-theme');if(t==='theme-dark'||t==='theme-light'){document.documentElement.classList.add(t);}}());</script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Martian+Mono:wght@300;400;600;700&display=swap" rel="stylesheet">
   <style>
     /*
      * ── Theming system ───────────────────────────────────────────────────────
@@ -32,50 +35,50 @@
     /* ── Dark theme (default) ───────────────────────────────────────────── */
     :root
     {
-      /* Surfaces */
-      --color-bg-base:     #0d1117;   /* page background              */
-      --color-bg-raised:   #161b22;   /* header, panels               */
-      --color-bg-overlay:  #21262d;   /* inputs, dropdowns            */
-      --color-bg-emphasis: #2d333b;   /* hover states                 */
+      /* Surfaces — deep void navy */
+      --color-bg-base:     #080b12;
+      --color-bg-raised:   #0d1220;
+      --color-bg-overlay:  #141b2d;
+      --color-bg-emphasis: #1e2740;
 
-      /* Foregrounds  (contrast on bg-base unless noted)               */
-      --color-fg-default:   #e6edf3;  /* 16.7:1 ✓ primary text        */
-      --color-fg-muted:     #8b949e;  /*  6.0:1 ✓ labels, secondary   */
-      --color-fg-subtle:    #6e7681;  /*  3.7:1   hints, placeholders  */
-      --color-fg-on-accent: #0d1117;  /*  7.98:1 ✓ text on accent bg  */
+      /* Foregrounds */
+      --color-fg-default:   #e8ecf4;  /* 17.0:1 ✓ */
+      --color-fg-muted:     #8892ab;  /*  6.3:1 ✓ */
+      --color-fg-subtle:    #5b6480;  /*  3.8:1   hints */
+      --color-fg-on-accent: #080b12;  /* 10.8:1 ✓ dark text on amber */
 
       /* Borders */
-      --color-border-default: #30363d;
-      --color-border-muted:   #21262d;
+      --color-border-default: #1e2a42;
+      --color-border-muted:   #141b2d;
 
-      /* Accent (blue) — 7.98:1 on bg-base ✓ */
-      --color-accent:        #58a6ff;
-      --color-accent-subtle: rgba(88,166,255,.12);
-      --color-accent-border: rgba(88,166,255,.30);
-      --color-accent-focus:  rgba(88,166,255,.18);
+      /* Accent — bright amber: 10.8:1 on bg-base ✓ */
+      --color-accent:        #f0b429;
+      --color-accent-subtle: rgba(240,180,41,.10);
+      --color-accent-border: rgba(240,180,41,.30);
+      --color-accent-focus:  rgba(240,180,41,.15);
 
       /* Success (green) */
-      --color-success:        #3fb950;
-      --color-success-subtle: rgba(63,185,80,.12);
-      --color-success-border: rgba(63,185,80,.30);
+      --color-success:        #4ade80;
+      --color-success-subtle: rgba(74,222,128,.10);
+      --color-success-border: rgba(74,222,128,.30);
 
       /* Error (red) */
-      --color-error:        #f85149;
-      --color-error-subtle: rgba(248,81,73,.12);
-      --color-error-border: rgba(248,81,73,.30);
+      --color-error:        #f87171;
+      --color-error-subtle: rgba(248,113,113,.10);
+      --color-error-border: rgba(248,113,113,.30);
 
-      /* Warning (amber) */
-      --color-warn:              #d29922;
-      --color-warn-subtle:       rgba(210,153,34,.12);
-      --color-warn-border:       rgba(210,153,34,.30);
-      --color-warn-badge-bg:     #2d1f00;
-      --color-warn-badge-border: #6e4a00;
+      /* Warning — orange (distinct from amber accent) */
+      --color-warn:              #fb923c;
+      --color-warn-subtle:       rgba(251,146,60,.10);
+      --color-warn-border:       rgba(251,146,60,.30);
+      --color-warn-badge-bg:     #2a1500;
+      --color-warn-badge-border: #7c3500;
 
       /* Diff viewer */
-      --color-diff-add-bg: #0d2119;
-      --color-diff-add-fg: #3fb950;
-      --color-diff-rem-bg: #1c0a0a;
-      --color-diff-rem-fg: #f85149;
+      --color-diff-add-bg: #0a2010;
+      --color-diff-add-fg: #4ade80;
+      --color-diff-rem-bg: #200a0a;
+      --color-diff-rem-fg: #f87171;
 
       /* ── Legacy aliases ── keeps every existing var(--xxx) working ── */
       --bg:       var(--color-bg-base);
@@ -95,13 +98,13 @@
     }
 
     /* ── Light theme token values (shared by media query + class) ───────── */
-    @media (prefers-color-scheme: light) { :root { --color-bg-base:#ffffff; --color-bg-raised:#f6f8fa; --color-bg-overlay:#eaeef2; --color-bg-emphasis:#d0d7de; --color-fg-default:#1f2328; --color-fg-muted:#57606a; --color-fg-subtle:#6e7781; --color-fg-on-accent:#ffffff; --color-border-default:#d0d7de; --color-border-muted:#eaeef2; --color-accent:#0969da; --color-accent-subtle:rgba(9,105,218,.08); --color-accent-border:rgba(9,105,218,.30); --color-accent-focus:rgba(9,105,218,.18); --color-success:#1a7f37; --color-success-subtle:rgba(26,127,55,.08); --color-success-border:rgba(26,127,55,.30); --color-error:#d1242f; --color-error-subtle:rgba(209,36,47,.08); --color-error-border:rgba(209,36,47,.30); --color-warn:#9a6700; --color-warn-subtle:rgba(154,103,0,.08); --color-warn-border:rgba(154,103,0,.30); --color-warn-badge-bg:#fff8c5; --color-warn-badge-border:#d4a72c; --color-diff-add-bg:#e6ffec; --color-diff-add-fg:#1a7f37; --color-diff-rem-bg:#ffebe9; --color-diff-rem-fg:#d1242f; } }
+    @media (prefers-color-scheme: light) { :root { --color-bg-base:#f4efe6; --color-bg-raised:#ebe5d8; --color-bg-overlay:#e0d9ca; --color-bg-emphasis:#cfc9bc; --color-fg-default:#0f0e14; --color-fg-muted:#4a4760; --color-fg-subtle:#736f8a; --color-fg-on-accent:#ffffff; --color-border-default:#cfc9bc; --color-border-muted:#dcd6ca; --color-accent:#7c4200; --color-accent-subtle:rgba(124,66,0,.08); --color-accent-border:rgba(124,66,0,.30); --color-accent-focus:rgba(124,66,0,.15); --color-success:#155e2e; --color-success-subtle:rgba(21,94,46,.08); --color-success-border:rgba(21,94,46,.30); --color-error:#9f1919; --color-error-subtle:rgba(159,25,25,.08); --color-error-border:rgba(159,25,25,.30); --color-warn:#9a4000; --color-warn-subtle:rgba(154,64,0,.08); --color-warn-border:rgba(154,64,0,.30); --color-warn-badge-bg:#fff4e5; --color-warn-badge-border:#f09320; --color-diff-add-bg:#d5f5e3; --color-diff-add-fg:#155e2e; --color-diff-rem-bg:#fde8e8; --color-diff-rem-fg:#9f1919; } }
 
     /* ── Explicit dark class (overrides system preference) ──────────────── */
-    html.theme-dark { --color-bg-base:#0d1117; --color-bg-raised:#161b22; --color-bg-overlay:#21262d; --color-bg-emphasis:#2d333b; --color-fg-default:#e6edf3; --color-fg-muted:#8b949e; --color-fg-subtle:#6e7681; --color-fg-on-accent:#0d1117; --color-border-default:#30363d; --color-border-muted:#21262d; --color-accent:#58a6ff; --color-accent-subtle:rgba(88,166,255,.12); --color-accent-border:rgba(88,166,255,.30); --color-accent-focus:rgba(88,166,255,.18); --color-success:#3fb950; --color-success-subtle:rgba(63,185,80,.12); --color-success-border:rgba(63,185,80,.30); --color-error:#f85149; --color-error-subtle:rgba(248,81,73,.12); --color-error-border:rgba(248,81,73,.30); --color-warn:#d29922; --color-warn-subtle:rgba(210,153,34,.12); --color-warn-border:rgba(210,153,34,.30); --color-warn-badge-bg:#2d1f00; --color-warn-badge-border:#6e4a00; --color-diff-add-bg:#0d2119; --color-diff-add-fg:#3fb950; --color-diff-rem-bg:#1c0a0a; --color-diff-rem-fg:#f85149; }
+    html.theme-dark { --color-bg-base:#080b12; --color-bg-raised:#0d1220; --color-bg-overlay:#141b2d; --color-bg-emphasis:#1e2740; --color-fg-default:#e8ecf4; --color-fg-muted:#8892ab; --color-fg-subtle:#5b6480; --color-fg-on-accent:#080b12; --color-border-default:#1e2a42; --color-border-muted:#141b2d; --color-accent:#f0b429; --color-accent-subtle:rgba(240,180,41,.10); --color-accent-border:rgba(240,180,41,.30); --color-accent-focus:rgba(240,180,41,.15); --color-success:#4ade80; --color-success-subtle:rgba(74,222,128,.10); --color-success-border:rgba(74,222,128,.30); --color-error:#f87171; --color-error-subtle:rgba(248,113,113,.10); --color-error-border:rgba(248,113,113,.30); --color-warn:#fb923c; --color-warn-subtle:rgba(251,146,60,.10); --color-warn-border:rgba(251,146,60,.30); --color-warn-badge-bg:#2a1500; --color-warn-badge-border:#7c3500; --color-diff-add-bg:#0a2010; --color-diff-add-fg:#4ade80; --color-diff-rem-bg:#200a0a; --color-diff-rem-fg:#f87171; }
 
     /* ── Explicit light class (overrides system preference) ─────────────── */
-    html.theme-light { --color-bg-base:#ffffff; --color-bg-raised:#f6f8fa; --color-bg-overlay:#eaeef2; --color-bg-emphasis:#d0d7de; --color-fg-default:#1f2328; --color-fg-muted:#57606a; --color-fg-subtle:#6e7781; --color-fg-on-accent:#ffffff; --color-border-default:#d0d7de; --color-border-muted:#eaeef2; --color-accent:#0969da; --color-accent-subtle:rgba(9,105,218,.08); --color-accent-border:rgba(9,105,218,.30); --color-accent-focus:rgba(9,105,218,.18); --color-success:#1a7f37; --color-success-subtle:rgba(26,127,55,.08); --color-success-border:rgba(26,127,55,.30); --color-error:#d1242f; --color-error-subtle:rgba(209,36,47,.08); --color-error-border:rgba(209,36,47,.30); --color-warn:#9a6700; --color-warn-subtle:rgba(154,103,0,.08); --color-warn-border:rgba(154,103,0,.30); --color-warn-badge-bg:#fff8c5; --color-warn-badge-border:#d4a72c; --color-diff-add-bg:#e6ffec; --color-diff-add-fg:#1a7f37; --color-diff-rem-bg:#ffebe9; --color-diff-rem-fg:#d1242f; }
+    html.theme-light { --color-bg-base:#f4efe6; --color-bg-raised:#ebe5d8; --color-bg-overlay:#e0d9ca; --color-bg-emphasis:#cfc9bc; --color-fg-default:#0f0e14; --color-fg-muted:#4a4760; --color-fg-subtle:#736f8a; --color-fg-on-accent:#ffffff; --color-border-default:#cfc9bc; --color-border-muted:#dcd6ca; --color-accent:#7c4200; --color-accent-subtle:rgba(124,66,0,.08); --color-accent-border:rgba(124,66,0,.30); --color-accent-focus:rgba(124,66,0,.15); --color-success:#155e2e; --color-success-subtle:rgba(21,94,46,.08); --color-success-border:rgba(21,94,46,.30); --color-error:#9f1919; --color-error-subtle:rgba(159,25,25,.08); --color-error-border:rgba(159,25,25,.30); --color-warn:#9a4000; --color-warn-subtle:rgba(154,64,0,.08); --color-warn-border:rgba(154,64,0,.30); --color-warn-badge-bg:#fff4e5; --color-warn-badge-border:#f09320; --color-diff-add-bg:#d5f5e3; --color-diff-add-fg:#155e2e; --color-diff-rem-bg:#fde8e8; --color-diff-rem-fg:#9f1919; }
     * { box-sizing: border-box; margin: 0; padding: 0; }
 
     /* ── Custom scrollbar — dark theme ── */
@@ -113,33 +116,73 @@
     * { scrollbar-width: thin; scrollbar-color: var(--border) var(--surface2); }
     body
     {
-      background: var(--bg);
-      color: var(--text);
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-      font-size: 16px;
+      background-color: var(--color-bg-base);
+      background-image: radial-gradient(rgba(255,255,255,.028) 1px, transparent 1px);
+      background-size: 22px 22px;
+      color: var(--color-fg-default);
+      font-family: 'Martian Mono', 'Cascadia Code', 'Fira Code', monospace;
+      font-size: 15px;
+      font-weight: 400;
+      line-height: 1.6;
       min-height: 100vh;
     }
+
+    /* Atmospheric radial glow — top centre, fades to nothing */
+    body::before
+    {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background:
+        radial-gradient(ellipse 110% 55% at 50% -5%,
+          rgba(28,46,110,.40) 0%,
+          transparent 65%),
+        radial-gradient(ellipse 60% 30% at 85% 95%,
+          rgba(240,180,41,.04) 0%,
+          transparent 55%);
+      pointer-events: none;
+      z-index: 0;
+    }
+    header, .tabs, .content, #toast-container { position: relative; z-index: 1; }
+
+    /* dot grid off in light mode */
+    html.theme-light body { background-image: none; }
+    @media (prefers-color-scheme: light) { body { background-image: none; } }
 
     /* ── Header ── */
     header
     {
-      background: var(--surface);
-      border-bottom: 1px solid var(--border);
+      background: var(--color-bg-raised);
       padding: 18px 36px;
       display: flex;
       align-items: center;
       gap: 12px;
     }
+    header::after
+    {
+      content: '';
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      height: 1px;
+      background: linear-gradient(
+        90deg,
+        transparent 0%,
+        var(--color-border-default) 15%,
+        rgba(240,180,41,.45) 50%,
+        var(--color-border-default) 85%,
+        transparent 100%
+      );
+    }
     header svg { width: 28px; height: 28px; flex-shrink: 0; }
-    header h1 { font-size: 1.4rem; font-weight: 600; }
+    header h1 { font-size: 1.25rem; font-weight: 700; letter-spacing: -0.02em; }
     header h1 span { color: var(--accent); }
 
     /* ── Tabs ── */
     .tabs
     {
       display: flex;
-      background: var(--surface);
-      border-bottom: 1px solid var(--border);
+      background: var(--color-bg-raised);
+      border-bottom: 1px solid var(--color-border-default);
       padding: 0 36px;
       gap: 0;
       overflow-x: auto;
@@ -160,15 +203,24 @@
       white-space: nowrap;
       flex-shrink: 0;
     }
-    .tab:hover { color: var(--text); }
-    .tab.active { color: var(--accent); border-bottom-color: var(--accent); }
+    .tab:hover { color: var(--color-fg-default); }
+    .tab.active
+    {
+      color: var(--color-accent);
+      border-bottom-color: var(--color-accent);
+    }
+    :root .tab.active,
+    html.theme-dark .tab.active
+    {
+      text-shadow: 0 0 28px rgba(240,180,41,.5);
+    }
 
     /* ── Content ── */
     .content { padding: 32px 36px; width: 100%; }
     .panel { display: none; }
     .panel.active { display: block; }
 
-    h2 { font-size: 1.15rem; font-weight: 600; margin-bottom: 6px; }
+    h2 { font-size: 1.1rem; font-weight: 700; margin-bottom: 6px; letter-spacing: -0.01em; }
     .subtitle { color: var(--muted); font-size: 1rem; margin-bottom: 24px; line-height: 1.6; }
 
     /* ── Form ── */
@@ -191,7 +243,11 @@
       outline: none;
       transition: border-color .15s;
     }
-    input:focus, textarea:focus, select:focus { border-color: var(--accent); }
+    input:focus, textarea:focus, select:focus
+    {
+      border-color: var(--color-accent);
+      box-shadow: 0 0 0 3px var(--color-accent-focus);
+    }
     textarea { resize: vertical; font-family: 'Consolas', 'Cascadia Code', monospace; }
 
     .row { display: flex; gap: 24px; flex-wrap: wrap; }
@@ -211,8 +267,17 @@
       transition: background .15s, opacity .15s;
     }
     .btn:hover { background: var(--border); }
-    .btn-primary { background: var(--color-accent); color: var(--color-fg-on-accent); border-color: var(--color-accent); }
-    .btn-primary:hover { background: var(--color-accent); opacity: .85; }
+    .btn-primary
+    {
+      background: var(--color-accent);
+      color: var(--color-fg-on-accent);
+      border-color: var(--color-accent);
+    }
+    .btn-primary:hover
+    {
+      opacity: .88;
+      box-shadow: 0 0 28px var(--color-accent-focus);
+    }
     .btn-group { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 18px; }
 
     /* ── Smart input zone (paste primary, upload secondary) ── */
@@ -300,8 +365,8 @@
       overflow: auto;
       line-height: 1.55;
     }
-    .result.ok  { border-color: var(--success); }
-    .result.err { border-color: var(--error); color: var(--error); }
+    .result.ok  { border-color: var(--color-success); box-shadow: inset 0 0 0 1px rgba(74,222,128,.08); }
+    .result.err { border-color: var(--color-error);   box-shadow: inset 0 0 0 1px rgba(248,113,113,.08); color: var(--color-error); }
 
     .copy-btn
     {
@@ -689,6 +754,28 @@
       color: var(--color-fg-default);
     }
 
+    /* ── Animations ─────────────────────────────────────────────────────── */
+    @keyframes fadeUp
+    {
+      from { opacity: 0; transform: translateY(7px); }
+      to   { opacity: 1; transform: translateY(0);   }
+    }
+
+    /* Staggered page-load reveal */
+    header  { animation: fadeUp .5s cubic-bezier(.22,.68,0,1.15) both; }
+    .tabs   { animation: fadeUp .5s .08s cubic-bezier(.22,.68,0,1.15) both; }
+    .content{ animation: fadeUp .5s .16s cubic-bezier(.22,.68,0,1.15) both; }
+
+    /* Subtle panel switch */
+    .panel.active { animation: fadeUp .22s ease both; }
+
+    /* Respect reduced motion */
+    @media (prefers-reduced-motion: reduce)
+    {
+      header, .tabs, .content, .panel.active { animation: none; }
+      *, *::before, *::after { transition-duration: .01ms !important; }
+    }
+
     /* ── Responsive ─────────────────────────────────────────────────────── */
 
     /* Large screens — constrain max readable width */
@@ -731,7 +818,7 @@
       header h1 { font-size: 1.1rem; }
       header svg { width: 22px; height: 22px; }
       .tabs { padding: 0 8px; }
-      .tab { padding: 11px 16px; font-size: 0.88rem; }
+      .tab { padding: 11px 14px; font-size: 0.82rem; }
       .content { padding: 14px 12px; }
       h2 { font-size: 1rem; }
       .subtitle { font-size: 0.85rem; }
