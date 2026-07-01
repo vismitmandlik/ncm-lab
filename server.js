@@ -1,16 +1,14 @@
 require('dotenv').config({ path: '.env.local' });
 
-const express    = require('express');
-const decrypt    = require('./api/decrypt');
-const decompress = require('./api/decompress');
+const express = require('express');
+const decode  = require('./api/decode');
 
 const app  = express();
 const PORT = process.env.PORT || 3000;
 
 app.use(express.json());
 app.use(express.static(__dirname));
-app.post('/api/decrypt',    decrypt);
-app.post('/api/decompress', decompress);
+app.post('/api/decode', decode);
 
 app.listen(PORT, function ()
 {

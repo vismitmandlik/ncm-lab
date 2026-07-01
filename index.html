@@ -234,20 +234,22 @@
 
 <!-- ─────────────────────────── Tabs ───────────────────────────────────────── -->
 <nav class="tabs">
-  <div class="tab active" data-tab="decrypt"   >Decrypt Backup</div>
-  <div class="tab"        data-tab="epoch"     >Epoch Converter</div>
-  <div class="tab"        data-tab="jsonxml"   >JSON / XML</div>
-  <div class="tab"        data-tab="decompress">Snappy Decompress</div>
+  <div class="tab active" data-tab="decode" >Decode Field</div>
+  <div class="tab"        data-tab="epoch"  >Epoch Converter</div>
+  <div class="tab"        data-tab="jsonxml">JSON / XML</div>
 </nav>
 
 <div class="content">
 
-  <!-- ═══════════════════════ DECRYPT ═══════════════════════════════════════ -->
-  <div class="panel active" id="panel-decrypt">
-    <h2>Config Backup Decryptor</h2>
+  <!-- ═══════════════════════ DECODE ══════════════════════════════════════ -->
+  <div class="panel active" id="panel-decode">
+    <h2>Decode Field</h2>
     <p class="subtitle">
-      Decrypts <code>running.file.content</code> / <code>startup.file.content</code> fields
-      stored in NCM backup records &mdash; AES-ECB + PKCS7 + Base64.
+      Auto-detects the encoding and decodes any NCM backend field.
+      Tries <strong>Snappy decompress</strong> first (used by <code>CodecUtil.compress()</code>
+      for <code>config.conflict.context</code>, <code>config.backup.file.content</code>, etc.),
+      then falls back to <strong>AES-ECB decrypt</strong> (DB-level sensitive fields).
+      The method used is shown in the output label.
     </p>
 
     <div class="row">
@@ -267,21 +269,21 @@
       </div>
       <div class="col">
         <div class="field">
-          <label>Option B &mdash; Paste Base64-encoded encrypted value</label>
-          <textarea id="cipher-input" rows="5" placeholder="Paste the value of running.file.content or startup.file.content here..."></textarea>
+          <label>Option B &mdash; Paste encoded value</label>
+          <textarea id="decode-input" rows="5" placeholder="Paste any Base64 / Base64URL encoded field value here..."></textarea>
         </div>
       </div>
     </div>
 
     <div class="btn-group">
-      <button class="btn btn-primary" id="btn-decrypt">Decrypt</button>
-      <button class="btn" id="btn-decrypt-clear">Clear</button>
+      <button class="btn btn-primary" id="btn-decode">Decode</button>
+      <button class="btn" id="btn-decode-clear">Clear</button>
     </div>
 
-    <label>Decrypted Output</label>
+    <label id="decode-out-label">Output</label>
     <div class="result-wrap">
-      <div class="result" id="decrypt-out"></div>
-      <button class="btn copy-btn" id="btn-copy-decrypt">Copy</button>
+      <div class="result" id="decode-out"></div>
+      <button class="btn copy-btn" id="btn-copy-decode">Copy</button>
     </div>
   </div>
 
@@ -379,31 +381,6 @@
     <div id="diff-result"></div>
   </div>
 
-  <!-- ═══════════════════════ SNAPPY DECOMPRESS ════════════════════════════ -->
-  <div class="panel" id="panel-decompress">
-    <h2>Snappy Decompress</h2>
-    <p class="subtitle">
-      Decompresses Snappy + Base64URL encoded fields — e.g. <code>config.conflict.context</code>
-      returned by the config-conflict API. These fields are <strong>not</strong> AES-encrypted;
-      they go through <code>CodecUtil.compress()</code> (Snappy) only.
-    </p>
-
-    <div class="field">
-      <label>Base64URL-encoded Snappy data</label>
-      <textarea id="decompress-input" rows="6" placeholder="Paste the value of config.conflict.context or any Snappy-compressed Base64URL field here..."></textarea>
-    </div>
-
-    <div class="btn-group">
-      <button class="btn btn-primary" id="btn-decompress">Decompress</button>
-      <button class="btn"             id="btn-decompress-clear">Clear</button>
-    </div>
-
-    <label>Decompressed Output</label>
-    <div class="result-wrap">
-      <div class="result" id="decompress-out"></div>
-      <button class="btn copy-btn" id="btn-copy-decompress">Copy</button>
-    </div>
-  </div>
 
 </div><!-- /content -->
 
@@ -423,7 +400,7 @@ document.querySelectorAll('.tab').forEach(function (tab)
 });
 
 /* ═══════════════════════════════════════════════════════════════════════════
-   DECRYPT
+   DECODE FIELD
 ═══════════════════════════════════════════════════════════════════════════ */
 var fileContent = null;
 var dropZone    = document.getElementById('drop-zone');
@@ -455,35 +432,39 @@ function readFile(file)
   reader.readAsText(file);
 }
 
-document.getElementById('btn-decrypt').addEventListener('click', function ()
+document.getElementById('btn-decode').addEventListener('click', function ()
 {
-  var paste = document.getElementById('cipher-input').value.trim();
+  var paste = document.getElementById('decode-input').value.trim();
   var raw   = fileContent || paste;
-  var out   = document.getElementById('decrypt-out');
-  var btn   = document.getElementById('btn-decrypt');
+  var out   = document.getElementById('decode-out');
+  var btn   = document.getElementById('btn-decode');
+  var lbl   = document.getElementById('decode-out-label');
 
   if (!raw)
   {
-    showResult(out, 'Provide encrypted content via file upload or paste.', 'err');
+    showResult(out, 'Provide encoded content via file upload or paste.', 'err');
     return;
   }
 
   btn.disabled    = true;
-  btn.textContent = 'Decrypting…';
+  btn.textContent = 'Decoding…';
   showResult(out, '', '');
+  lbl.textContent = 'Output';
 
-  fetch('/api/decrypt',
+  fetch('/api/decode',
   {
     method:  'POST',
     headers: { 'Content-Type': 'application/json' },
-    body:    JSON.stringify({ ciphertext: raw })
+    body:    JSON.stringify({ data: raw })
   })
   .then(function (res) { return res.json().then(function (data) { return { ok: res.ok, data: data }; }); })
   .then(function (r)
   {
     if (r.ok)
     {
-      showResult(out, r.data.plaintext, 'ok');
+      var methodLabel = r.data.method === 'snappy' ? 'Output (Snappy decompressed)' : 'Output (AES-ECB decrypted)';
+      lbl.textContent = methodLabel;
+      showResult(out, r.data.result, 'ok');
     }
     else
     {
@@ -497,24 +478,25 @@ document.getElementById('btn-decrypt').addEventListener('click', function ()
   .finally(function ()
   {
     btn.disabled    = false;
-    btn.textContent = 'Decrypt';
+    btn.textContent = 'Decode';
   });
 });
 
-document.getElementById('btn-decrypt-clear').addEventListener('click', function ()
+document.getElementById('btn-decode-clear').addEventListener('click', function ()
 {
-  document.getElementById('cipher-input').value = '';
+  document.getElementById('decode-input').value = '';
   document.getElementById('file-name').textContent = '';
+  document.getElementById('decode-out-label').textContent = 'Output';
   fileContent = null;
   fileInput.value = '';
-  var out = document.getElementById('decrypt-out');
+  var out = document.getElementById('decode-out');
   out.textContent = '';
   out.className = 'result';
 });
 
-document.getElementById('btn-copy-decrypt').addEventListener('click', function ()
+document.getElementById('btn-copy-decode').addEventListener('click', function ()
 {
-  copyText(document.getElementById('decrypt-out').textContent, this);
+  copyText(document.getElementById('decode-out').textContent, this);
 });
 
 function showResult(el, text, cls)
@@ -911,70 +893,6 @@ function copyText(text, btn)
   });
 }
 
-/* ═══════════════════════════════════════════════════════════════════════════
-   SNAPPY DECOMPRESS
-═══════════════════════════════════════════════════════════════════════════ */
-document.getElementById('btn-decompress').addEventListener('click', function ()
-{
-  var data = document.getElementById('decompress-input').value.trim();
-  var out  = document.getElementById('decompress-out');
-  var btn  = document.getElementById('btn-decompress');
-
-  if (!data)
-  {
-    showResult(out, 'Paste Base64URL Snappy data to decompress.', 'err');
-    return;
-  }
-
-  btn.disabled    = true;
-  btn.textContent = 'Decompressing…';
-  showResult(out, '', '');
-
-  fetch('/api/decompress',
-  {
-    method:  'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body:    JSON.stringify({ data: data })
-  })
-  .then(function (res) { return res.json().then(function (d) { return { ok: res.ok, data: d }; }); })
-  .then(function (r)
-  {
-    if (r.ok)
-    {
-      // If server parsed it as JSON, pretty-print it
-      var text = r.data.json
-        ? JSON.stringify(r.data.json, null, 2)
-        : r.data.result;
-      showResult(out, text, 'ok');
-    }
-    else
-    {
-      showResult(out, r.data.error || 'Unknown server error.', 'err');
-    }
-  })
-  .catch(function (e)
-  {
-    showResult(out, 'Request failed: ' + e.message, 'err');
-  })
-  .finally(function ()
-  {
-    btn.disabled    = false;
-    btn.textContent = 'Decompress';
-  });
-});
-
-document.getElementById('btn-decompress-clear').addEventListener('click', function ()
-{
-  document.getElementById('decompress-input').value = '';
-  var out = document.getElementById('decompress-out');
-  out.textContent = '';
-  out.className   = 'result';
-});
-
-document.getElementById('btn-copy-decompress').addEventListener('click', function ()
-{
-  copyText(document.getElementById('decompress-out').textContent, this);
-});
 </script>
 </body>
 </html>
