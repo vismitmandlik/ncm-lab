@@ -1,4 +1,4 @@
-# NCM DevKit
+# NCM Lab
 
 A client-side developer toolkit for Motadata NCM debugging.
 Hosted on Vercel — accessible from any browser, no install required.
