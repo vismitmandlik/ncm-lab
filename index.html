@@ -717,6 +717,10 @@ document.getElementById('btn-decode').addEventListener('click', function ()
     {
       showResult(out, r.data.error || 'Unknown server error.', 'err');
     }
+    requestAnimationFrame(function ()
+    {
+      lbl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
   })
   .catch(function (e)
   {
