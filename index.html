@@ -127,22 +127,74 @@
     .btn-primary:hover { opacity: .85; }
     .btn-group { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 18px; }
 
-    /* ── Drop zone ── */
-    .drop-zone
+    /* ── Smart input zone (paste primary, upload secondary) ── */
+    .input-zone { position: relative; }
+    .input-zone textarea
     {
-      border: 2px dashed var(--border);
-      border-radius: 10px;
-      padding: 32px 24px;
-      text-align: center;
-      cursor: pointer;
-      color: var(--muted);
-      font-size: 0.95rem;
-      transition: border-color .15s, color .15s;
-      user-select: none;
+      min-height: 200px;
+      padding-top: 42px;
+      transition: border-color .15s, box-shadow .15s;
     }
-    .drop-zone:hover, .drop-zone.over { border-color: var(--accent); color: var(--text); }
-    .drop-zone input[type="file"] { display: none; }
-    .drop-zone svg { display: block; margin: 0 auto 10px; width: 36px; height: 36px; }
+    .input-zone.drag-over textarea
+    {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(88,166,255,.15);
+    }
+    .input-zone-toolbar
+    {
+      position: absolute;
+      top: 8px; right: 8px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      z-index: 1;
+      pointer-events: none;
+    }
+    .input-zone-toolbar > * { pointer-events: all; }
+    .upload-btn
+    {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 12px;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      background: var(--surface);
+      color: var(--muted);
+      font-size: 0.8rem;
+      cursor: pointer;
+      transition: border-color .15s, color .15s;
+    }
+    .upload-btn:hover { border-color: var(--accent); color: var(--accent); }
+    .upload-btn svg { width: 13px; height: 13px; flex-shrink: 0; }
+    .file-chip
+    {
+      display: none;
+      align-items: center;
+      gap: 5px;
+      padding: 3px 10px;
+      border-radius: 6px;
+      background: rgba(88,166,255,.12);
+      color: var(--accent);
+      font-size: 0.78rem;
+      border: 1px solid rgba(88,166,255,.25);
+      max-width: 200px;
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+    }
+    .file-chip.visible { display: flex; }
+    .file-chip-remove
+    {
+      cursor: pointer;
+      opacity: .6;
+      flex-shrink: 0;
+      font-size: 1rem;
+      line-height: 1;
+      margin-left: 2px;
+    }
+    .file-chip-remove:hover { opacity: 1; }
+    input[type="file"].hidden-file { display: none; }
 
     /* ── Result box ── */
     .result-wrap { position: relative; }
@@ -276,8 +328,7 @@
       .subtitle { font-size: 0.85rem; }
       input[type="text"], input[type="number"], textarea, select { padding: 9px 12px; font-size: 0.9rem; }
       .btn { padding: 9px 16px; font-size: 0.88rem; }
-      .drop-zone { padding: 20px 14px; }
-      .drop-zone svg { width: 28px; height: 28px; }
+      .input-zone textarea { min-height: 140px; padding-top: 38px; }
       .result { max-height: 38vh; font-size: 0.82rem; padding: 12px 40px 12px 12px; }
       .copy-btn { padding: 3px 10px; font-size: 0.74rem; top: 8px; right: 8px; }
       .diff-line { font-size: 0.78rem; padding: 1px 10px; }
@@ -315,27 +366,26 @@
       The method used is shown in the output label.
     </p>
 
-    <div class="row">
-      <div class="col">
-        <div class="field">
-          <label>Option A &mdash; Upload file</label>
-          <div class="drop-zone" id="drop-zone">
-            <input type="file" id="file-input" />
-            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+    <div class="field">
+      <label>Encoded value</label>
+      <div class="input-zone" id="input-zone">
+        <div class="input-zone-toolbar">
+          <div class="file-chip" id="file-chip">
+            <span id="file-name"></span>
+            <span class="file-chip-remove" id="btn-remove-file" title="Remove file">&times;</span>
+          </div>
+          <label class="upload-btn" for="file-input" title="Upload a file instead of pasting">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
               <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/>
               <polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/>
             </svg>
-            Drop file here or <strong>click to browse</strong>
-            <div class="hint" id="file-name" style="margin-top:6px"></div>
-          </div>
+            Upload file
+          </label>
+          <input type="file" id="file-input" class="hidden-file" />
         </div>
+        <textarea id="decode-input" placeholder="Paste any Base64 or Base64URL encoded field value here — or drag &amp; drop a file onto this area…"></textarea>
       </div>
-      <div class="col">
-        <div class="field">
-          <label>Option B &mdash; Paste encoded value</label>
-          <textarea id="decode-input" rows="5" placeholder="Paste any Base64 / Base64URL encoded field value here..."></textarea>
-        </div>
-      </div>
+      <p class="hint">Drag &amp; drop a file directly onto the text area. Auto-detects Snappy compression and AES-ECB encryption.</p>
     </div>
 
     <div class="btn-group">
@@ -467,33 +517,57 @@ document.querySelectorAll('.tab').forEach(function (tab)
 /* ═══════════════════════════════════════════════════════════════════════════
    DECODE FIELD
 ═══════════════════════════════════════════════════════════════════════════ */
-var fileContent = null;
-var dropZone    = document.getElementById('drop-zone');
-var fileInput   = document.getElementById('file-input');
+var fileContent  = null;
+var inputZone    = document.getElementById('input-zone');
+var decodeInput  = document.getElementById('decode-input');
+var fileInput    = document.getElementById('file-input');
+var fileChip     = document.getElementById('file-chip');
+var fileNameEl   = document.getElementById('file-name');
 
-dropZone.addEventListener('click', function () { fileInput.click(); });
-dropZone.addEventListener('dragover', function (e)
+/* Drag-and-drop directly on the textarea / input zone */
+['dragenter', 'dragover'].forEach(function (evt)
 {
-  e.preventDefault();
-  dropZone.classList.add('over');
+  inputZone.addEventListener(evt, function (e)
+  {
+    e.preventDefault();
+    inputZone.classList.add('drag-over');
+  });
 });
-dropZone.addEventListener('dragleave', function () { dropZone.classList.remove('over'); });
-dropZone.addEventListener('drop', function (e)
+['dragleave', 'drop'].forEach(function (evt)
 {
-  e.preventDefault();
-  dropZone.classList.remove('over');
-  if (e.dataTransfer.files[0]) { readFile(e.dataTransfer.files[0]); }
+  inputZone.addEventListener(evt, function (e)
+  {
+    if (evt === 'drop') { e.preventDefault(); }
+    inputZone.classList.remove('drag-over');
+    if (evt === 'drop' && e.dataTransfer.files[0]) { readFile(e.dataTransfer.files[0]); }
+  });
 });
+
+/* File picker */
 fileInput.addEventListener('change', function ()
 {
   if (fileInput.files[0]) { readFile(fileInput.files[0]); }
 });
 
+/* Remove file chip */
+document.getElementById('btn-remove-file').addEventListener('click', function ()
+{
+  fileContent = null;
+  fileInput.value = '';
+  decodeInput.value = '';
+  fileChip.classList.remove('visible');
+});
+
 function readFile(file)
 {
-  document.getElementById('file-name').textContent = file.name;
   var reader = new FileReader();
-  reader.onload = function (e) { fileContent = e.target.result.trim(); };
+  reader.onload = function (e)
+  {
+    fileContent = e.target.result.trim();
+    decodeInput.value = fileContent;
+    fileNameEl.textContent = file.name;
+    fileChip.classList.add('visible');
+  };
   reader.readAsText(file);
 }
 
@@ -550,10 +624,10 @@ document.getElementById('btn-decode').addEventListener('click', function ()
 document.getElementById('btn-decode-clear').addEventListener('click', function ()
 {
   document.getElementById('decode-input').value = '';
-  document.getElementById('file-name').textContent = '';
   document.getElementById('decode-out-label').textContent = 'Output';
   fileContent = null;
   fileInput.value = '';
+  fileChip.classList.remove('visible');
   var out = document.getElementById('decode-out');
   out.textContent = '';
   out.className = 'result';
