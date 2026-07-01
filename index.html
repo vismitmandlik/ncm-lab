@@ -754,6 +754,38 @@
       color: var(--color-fg-default);
     }
 
+    /* ── JSON syntax highlighting ───────────────────────────────────────── */
+    /* Dark theme (defaults) */
+    .json-key   { color: #7db9e8; }                     /* steel blue  — property names  */
+    .json-str   { color: #98c379; }                     /* sage green  — string values   */
+    .json-num   { color: #f0b429; }                     /* amber       — numbers (accent)*/
+    .json-bool  { color: #c586c0; }                     /* soft purple — true / false    */
+    .json-null  { color: #c586c0; font-style: italic; } /* soft purple — null            */
+    .json-punct { color: #3e4d6a; }                     /* dim navy    — { } [ ] : ,     */
+
+    /* Light theme overrides */
+    @media (prefers-color-scheme: light)
+    {
+      .json-key   { color: #0051a0; }
+      .json-str   { color: #116329; }
+      .json-num   { color: #7c4200; }
+      .json-bool  { color: #7c3aed; }
+      .json-null  { color: #7c3aed; font-style: italic; }
+      .json-punct { color: #aaa8b8; }
+    }
+    html.theme-light .json-key   { color: #0051a0; }
+    html.theme-light .json-str   { color: #116329; }
+    html.theme-light .json-num   { color: #7c4200; }
+    html.theme-light .json-bool  { color: #7c3aed; }
+    html.theme-light .json-null  { color: #7c3aed; font-style: italic; }
+    html.theme-light .json-punct { color: #aaa8b8; }
+    html.theme-dark  .json-key   { color: #7db9e8; }
+    html.theme-dark  .json-str   { color: #98c379; }
+    html.theme-dark  .json-num   { color: #f0b429; }
+    html.theme-dark  .json-bool  { color: #c586c0; }
+    html.theme-dark  .json-null  { color: #c586c0; font-style: italic; }
+    html.theme-dark  .json-punct { color: #3e4d6a; }
+
     /* ── Animations ─────────────────────────────────────────────────────── */
     @keyframes fadeUp
     {
@@ -1442,7 +1474,17 @@ document.getElementById('btn-decode').addEventListener('click', function ()
         ? '<span class="badge badge-info" style="margin-left:8px">Snappy</span>'
         : '<span class="badge badge-warn" style="margin-left:8px">AES-ECB</span>';
       lbl.innerHTML = 'Output' + badge;
-      showResult(out, r.data.result, 'ok');
+      var resultText = r.data.result;
+      var isJSON = false;
+      try { JSON.parse(resultText); isJSON = true; } catch (_) {}
+      if (isJSON)
+      {
+        showResult(out, colorizeJSON(resultText), 'ok', { html: true });
+      }
+      else
+      {
+        showResult(out, resultText, 'ok');
+      }
     }
     else
     {
@@ -1494,10 +1536,100 @@ document.getElementById('decode-input').addEventListener('keydown', function (e)
   }
 });
 
-function showResult(el, text, cls)
+/* ── JSON syntax highlighter ──────────────────────────────────────────────
+   Character-by-character tokenizer. Safe: all non-tag content is HTML-escaped
+   before insertion. textContent on the result element still returns plain text
+   (no span tags), so the copy button copies clean JSON as-is.
+   ────────────────────────────────────────────────────────────────────────── */
+function colorizeJSON(str)
 {
-  el.textContent = text;
-  el.className   = 'result' + (cls ? ' ' + cls : '');
+  function esc(s)
+  {
+    return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  }
+
+  var html = '';
+  var i    = 0;
+  var len  = str.length;
+
+  while (i < len)
+  {
+    var ch = str[i];
+
+    /* ── String (key or value) ─────────────────────────────────────────── */
+    if (ch === '"')
+    {
+      var j = i + 1;
+      while (j < len)
+      {
+        if (str[j] === '\\') { j += 2; continue; }
+        if (str[j] === '"')  { j++;    break;     }
+        j++;
+      }
+      var tok = str.slice(i, j);
+      /* Look past whitespace for ':' to distinguish key from string value */
+      var k = j;
+      while (k < len && (str[k] === ' ' || str[k] === '\t')) k++;
+      var isKey = str[k] === ':';
+      html += '<span class="' + (isKey ? 'json-key' : 'json-str') + '">' + esc(tok) + '</span>';
+      i = j;
+      continue;
+    }
+
+    /* ── Number ────────────────────────────────────────────────────────── */
+    if (ch === '-' || (ch >= '0' && ch <= '9'))
+    {
+      var j = i;
+      if (str[j] === '-') j++;
+      while (j < len && str[j] >= '0' && str[j] <= '9') j++;
+      if (j < len && str[j] === '.')
+      {
+        j++;
+        while (j < len && str[j] >= '0' && str[j] <= '9') j++;
+      }
+      if (j < len && (str[j] === 'e' || str[j] === 'E'))
+      {
+        j++;
+        if (j < len && (str[j] === '+' || str[j] === '-')) j++;
+        while (j < len && str[j] >= '0' && str[j] <= '9') j++;
+      }
+      html += '<span class="json-num">' + esc(str.slice(i, j)) + '</span>';
+      i = j;
+      continue;
+    }
+
+    /* ── Keywords ──────────────────────────────────────────────────────── */
+    if (str.slice(i, i + 4) === 'true')  { html += '<span class="json-bool">true</span>';       i += 4; continue; }
+    if (str.slice(i, i + 5) === 'false') { html += '<span class="json-bool">false</span>';      i += 5; continue; }
+    if (str.slice(i, i + 4) === 'null')  { html += '<span class="json-null">null</span>';       i += 4; continue; }
+
+    /* ── Structural punctuation ────────────────────────────────────────── */
+    if ('{[}],'.indexOf(ch) !== -1 || ch === ':')
+    {
+      html += '<span class="json-punct">' + esc(ch) + '</span>';
+      i++;
+      continue;
+    }
+
+    /* ── Whitespace / anything else — pass through escaped ─────────────── */
+    html += esc(ch);
+    i++;
+  }
+
+  return html;
+}
+
+function showResult(el, text, cls, opts)
+{
+  if (opts && opts.html)
+  {
+    el.innerHTML = text;   /* text is pre-built HTML (already escaped) */
+  }
+  else
+  {
+    el.textContent = text;
+  }
+  el.className = 'result' + (cls ? ' ' + cls : '');
   var wrap = el.parentElement;
   if (wrap && wrap.classList.contains('result-wrap'))
   {
@@ -1792,20 +1924,24 @@ function runDiff()
     return;
   }
 
-  var collapsed = collapseContext(diff, 3);
+  var collapsed  = collapseContext(diff, 3);
+  var jsonDiff   = currentMode === 'json';
   var html = '<div class="diff-out">';
   collapsed.forEach(function (d)
   {
-    var esc = d[1].replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    var lineHtml = jsonDiff
+      ? colorizeJSON(d[1])
+      : d[1].replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+
     if (d[0] === 'hdr')
     {
-      html += '<div class="diff-line hdr">' + esc + '</div>';
+      html += '<div class="diff-line hdr">' + lineHtml + '</div>';
     }
     else
     {
       var cls    = d[0] ===  1 ? 'add' : d[0] === -1 ? 'rem' : 'ctx';
       var prefix = d[0] ===  1 ? '+  ' : d[0] === -1 ? '-  ' : '   ';
-      html += '<div class="diff-line ' + cls + '">' + prefix + esc + '</div>';
+      html += '<div class="diff-line ' + cls + '">' + prefix + lineHtml + '</div>';
     }
   });
   html += '</div>';
