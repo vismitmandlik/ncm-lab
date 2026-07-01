@@ -280,6 +280,112 @@
     .mode-btn { transition: background .15s, color .15s, border-color .15s; }
     .mode-btn.on { background: var(--accent); color: #0d1117; border-color: var(--accent); }
 
+    /* ── Section label (replaces inline-styled epoch h2s) ── */
+    .section-label
+    {
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--muted);
+      margin-bottom: 16px;
+    }
+
+    /* ── Segmented control (JSON / XML mode) ── */
+    .segmented
+    {
+      display: inline-flex;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 9px;
+      padding: 3px;
+      gap: 2px;
+      margin-bottom: 20px;
+    }
+    .seg-btn
+    {
+      padding: 8px 22px;
+      border: none;
+      border-radius: 7px;
+      background: transparent;
+      color: var(--muted);
+      font-size: 1rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: background .15s, color .15s;
+    }
+    .seg-btn.on { background: var(--accent); color: #0d1117; }
+    .seg-btn:not(.on):hover { color: var(--text); background: rgba(255,255,255,.06); }
+
+    /* ── Badge variants ── */
+    .badge-info { background: rgba(88,166,255,.12); color: var(--accent);  border: 1px solid rgba(88,166,255,.3); }
+    .badge-ok   { background: rgba(63,185,80,.12);  color: var(--success); border: 1px solid rgba(63,185,80,.3);  }
+
+    /* ── Toast notifications ── */
+    #toast-container
+    {
+      position: fixed;
+      bottom: 28px; right: 28px;
+      display: flex;
+      flex-direction: column-reverse;
+      gap: 8px;
+      z-index: 9999;
+      pointer-events: none;
+    }
+    .toast
+    {
+      padding: 12px 18px;
+      border-radius: 8px;
+      font-size: 0.95rem;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-left: 4px solid var(--border);
+      color: var(--text);
+      box-shadow: 0 8px 32px rgba(0,0,0,.6);
+      opacity: 0;
+      transform: translateY(10px);
+      transition: opacity .22s, transform .22s;
+      pointer-events: all;
+      max-width: 360px;
+      line-height: 1.45;
+    }
+    .toast.show  { opacity: 1; transform: translateY(0); }
+    .toast.t-err { border-left-color: var(--error);   color: var(--error); }
+    .toast.t-ok  { border-left-color: var(--success); }
+
+    /* ── Spinner for loading states ── */
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .spinner
+    {
+      display: inline-block;
+      width: 13px; height: 13px;
+      border: 2px solid currentColor;
+      border-top-color: transparent;
+      border-radius: 50%;
+      animation: spin .65s linear infinite;
+      vertical-align: middle;
+      margin-left: 7px;
+    }
+
+    /* ── Result box: hide when empty ── */
+    .result:empty { display: none; }
+
+    /* ── Copy button: invisible until result has content ── */
+    .result-wrap .copy-btn
+    {
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity .2s;
+    }
+    .result-wrap .copy-btn.visible
+    {
+      opacity: 1;
+      pointer-events: all;
+    }
+
+    /* ── Disabled button ── */
+    .btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
     /* ── Responsive ─────────────────────────────────────────────────────── */
 
     /* Large screens — constrain max readable width */
@@ -358,13 +464,7 @@
   <!-- ═══════════════════════ DECODE ══════════════════════════════════════ -->
   <div class="panel active" id="panel-decode">
     <h2>Decode Field</h2>
-    <p class="subtitle">
-      Auto-detects the encoding and decodes any NCM backend field.
-      Tries <strong>Snappy decompress</strong> first (used by <code>CodecUtil.compress()</code>
-      for <code>config.conflict.context</code>, <code>config.backup.file.content</code>, etc.),
-      then falls back to <strong>AES-ECB decrypt</strong> (DB-level sensitive fields).
-      The method used is shown in the output label.
-    </p>
+    <p class="subtitle">Auto-detects <strong>Snappy</strong> (API response fields) or <strong>AES-ECB</strong> (DB sensitive fields). Paste or drop a value below.</p>
 
     <div class="field">
       <label>Encoded value</label>
@@ -385,7 +485,6 @@
         </div>
         <textarea id="decode-input" placeholder="Paste any Base64 or Base64URL encoded field value here — or drag &amp; drop a file onto this area…"></textarea>
       </div>
-      <p class="hint">Drag &amp; drop a file directly onto the text area. Auto-detects Snappy compression and AES-ECB encryption.</p>
     </div>
 
     <div class="btn-group">
@@ -408,7 +507,7 @@
     <div class="row">
       <!-- Forward: epoch → datetime -->
       <div class="col">
-        <h2 style="font-size:0.88rem;margin-bottom:12px">Epoch &rarr; Timestamp</h2>
+        <p class="section-label">Epoch &rarr; Timestamp</p>
         <div class="field">
           <label>Epoch value</label>
           <input type="text" id="epoch-input" placeholder="e.g. 1751385600000 or 1751385600" />
@@ -435,7 +534,7 @@
 
       <!-- Reverse: datetime → epoch -->
       <div class="col">
-        <h2 style="font-size:0.88rem;margin-bottom:12px">Timestamp &rarr; Epoch</h2>
+        <p class="section-label">Timestamp &rarr; Epoch</p>
         <div class="field">
           <label>Datetime string</label>
           <input type="text" id="ts-input" placeholder="e.g. 2025-07-01T10:30:00+05:30" />
@@ -458,9 +557,9 @@
     <h2>JSON / XML Prettifier &amp; Diff</h2>
     <p class="subtitle">Prettify or minify payloads; diff two versions side-by-side.</p>
 
-    <div class="btn-group" style="margin-bottom:16px">
-      <button class="btn mode-btn on" data-mode="json">JSON</button>
-      <button class="btn mode-btn"    data-mode="xml" >XML</button>
+    <div class="segmented">
+      <button class="seg-btn on" data-mode="json">JSON</button>
+      <button class="seg-btn"    data-mode="xml" >XML</button>
     </div>
 
     <div class="row">
@@ -585,10 +684,10 @@ document.getElementById('btn-decode').addEventListener('click', function ()
     return;
   }
 
-  btn.disabled    = true;
-  btn.textContent = 'Decoding…';
+  btn.disabled   = true;
+  btn.innerHTML  = 'Decoding <span class="spinner"></span>';
   showResult(out, '', '');
-  lbl.textContent = 'Output';
+  lbl.innerHTML  = 'Output';
 
   fetch('/api/decode',
   {
@@ -601,8 +700,10 @@ document.getElementById('btn-decode').addEventListener('click', function ()
   {
     if (r.ok)
     {
-      var methodLabel = r.data.method === 'snappy' ? 'Output (Snappy decompressed)' : 'Output (AES-ECB decrypted)';
-      lbl.textContent = methodLabel;
+      var badge = r.data.method === 'snappy'
+        ? '<span class="badge badge-info" style="margin-left:8px">Snappy</span>'
+        : '<span class="badge badge-warn" style="margin-left:8px">AES-ECB</span>';
+      lbl.innerHTML = 'Output' + badge;
       showResult(out, r.data.result, 'ok');
     }
     else
@@ -616,15 +717,15 @@ document.getElementById('btn-decode').addEventListener('click', function ()
   })
   .finally(function ()
   {
-    btn.disabled    = false;
-    btn.textContent = 'Decode';
+    btn.disabled  = false;
+    btn.innerHTML = 'Decode';
   });
 });
 
 document.getElementById('btn-decode-clear').addEventListener('click', function ()
 {
   document.getElementById('decode-input').value = '';
-  document.getElementById('decode-out-label').textContent = 'Output';
+  document.getElementById('decode-out-label').innerHTML = 'Output';
   fileContent = null;
   fileInput.value = '';
   fileChip.classList.remove('visible');
@@ -638,10 +739,25 @@ document.getElementById('btn-copy-decode').addEventListener('click', function ()
   copyText(document.getElementById('decode-out').textContent, this);
 });
 
+document.getElementById('decode-input').addEventListener('keydown', function (e)
+{
+  if (e.key === 'Enter' && (e.ctrlKey || e.metaKey))
+  {
+    e.preventDefault();
+    document.getElementById('btn-decode').click();
+  }
+});
+
 function showResult(el, text, cls)
 {
   el.textContent = text;
   el.className   = 'result' + (cls ? ' ' + cls : '');
+  var wrap = el.parentElement;
+  if (wrap && wrap.classList.contains('result-wrap'))
+  {
+    var copyBtn = wrap.querySelector('.copy-btn');
+    if (copyBtn) { copyBtn.classList.toggle('visible', cls === 'ok'); }
+  }
 }
 
 /* ═══════════════════════════════════════════════════════════════════════════
@@ -797,12 +913,12 @@ document.getElementById('btn-copy-ts').addEventListener('click', function ()
 ═══════════════════════════════════════════════════════════════════════════ */
 var currentMode = 'json';
 
-document.querySelectorAll('.mode-btn').forEach(function (btn)
+document.querySelectorAll('.seg-btn').forEach(function (btn)
 {
   btn.addEventListener('click', function ()
   {
     currentMode = btn.dataset.mode;
-    document.querySelectorAll('.mode-btn').forEach(function (b)
+    document.querySelectorAll('.seg-btn').forEach(function (b)
     {
       b.classList.toggle('on', b.dataset.mode === currentMode);
     });
@@ -859,7 +975,7 @@ document.querySelectorAll('[data-action]').forEach(function (btn)
       catch (e)
       {
         flashBorder(el, 'var(--error)');
-        alert('Parse error: ' + e.message);
+        showToast('Parse error: ' + e.message, 'err');
       }
     }
     else if (action === 'minify')
@@ -879,7 +995,7 @@ document.querySelectorAll('[data-action]').forEach(function (btn)
       catch (e)
       {
         flashBorder(el, 'var(--error)');
-        alert('Parse error: ' + e.message);
+        showToast('Parse error: ' + e.message, 'err');
       }
     }
     else if (action === 'clear')
@@ -899,10 +1015,14 @@ function flashBorder(el, color)
   setTimeout(function () { el.style.borderColor = ''; }, 1800);
 }
 
+var btnDiffClear = document.getElementById('btn-diff-clear');
+btnDiffClear.disabled = true;
+
 document.getElementById('btn-diff').addEventListener('click', runDiff);
-document.getElementById('btn-diff-clear').addEventListener('click', function ()
+btnDiffClear.addEventListener('click', function ()
 {
   document.getElementById('diff-result').innerHTML = '';
+  btnDiffClear.disabled = true;
 });
 
 function runDiff()
@@ -922,6 +1042,7 @@ function runDiff()
   if (!hasChanges)
   {
     container.innerHTML = '<p class="no-diff">No differences found &mdash; both sides are identical.</p>';
+    btnDiffClear.disabled = false;
     return;
   }
 
@@ -943,6 +1064,7 @@ function runDiff()
   });
   html += '</div>';
   container.innerHTML = html;
+  btnDiffClear.disabled = false;
 }
 
 function lcsLineDiff(left, right)
@@ -1032,6 +1154,22 @@ function copyText(text, btn)
   });
 }
 
+function showToast(msg, type)
+{
+  var c = document.getElementById('toast-container');
+  var t = document.createElement('div');
+  t.className = 'toast' + (type ? ' t-' + type : '');
+  t.textContent = msg;
+  c.appendChild(t);
+  requestAnimationFrame(function () { t.classList.add('show'); });
+  setTimeout(function ()
+  {
+    t.classList.remove('show');
+    setTimeout(function () { if (c.contains(t)) { c.removeChild(t); } }, 250);
+  }, 3500);
+}
+
 </script>
+<div id="toast-container"></div>
 </body>
 </html>
