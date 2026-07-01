@@ -677,6 +677,17 @@ function readFile(file)
   reader.readAsText(file);
 }
 
+/* Typing or pasting into the textarea detaches the file automatically */
+decodeInput.addEventListener('input', function ()
+{
+  if (fileContent !== null)
+  {
+    fileContent = null;
+    fileInput.value = '';
+    fileChip.classList.remove('visible');
+  }
+});
+
 document.getElementById('btn-decode').addEventListener('click', function ()
 {
   var paste = document.getElementById('decode-input').value.trim();
