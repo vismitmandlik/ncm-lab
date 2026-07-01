@@ -1421,7 +1421,19 @@ document.getElementById('btn-decode').addEventListener('click', function ()
     headers: { 'Content-Type': 'application/json' },
     body:    JSON.stringify({ data: raw })
   })
-  .then(function (res) { return res.json().then(function (data) { return { ok: res.ok, data: data }; }); })
+  .then(function (res)
+  {
+    if (res.status === 413)
+    {
+      throw new Error('Input too large for the server limit (10 MB). Try a smaller value.');
+    }
+    return res.json()
+      .then(function (data) { return { ok: res.ok, data: data }; })
+      .catch(function ()
+      {
+        throw new Error('Server returned HTTP ' + res.status + ' with a non-JSON body.');
+      });
+  })
   .then(function (r)
   {
     if (r.ok)
@@ -1443,7 +1455,11 @@ document.getElementById('btn-decode').addEventListener('click', function ()
   })
   .catch(function (e)
   {
-    showResult(out, 'Request failed: ' + e.message, 'err');
+    showResult(out, e.message, 'err');
+    requestAnimationFrame(function ()
+    {
+      lbl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
   })
   .finally(function ()
   {
