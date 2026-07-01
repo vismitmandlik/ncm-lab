@@ -1,0 +1,25 @@
+{
+  "name": "ncm-lab",
+  "version": "1.0.0",
+  "description": "A client-side developer toolkit for Motadata NCM debugging. Hosted on Vercel — accessible from any browser, no install required.",
+  "main": "index.js",
+  "scripts": {
+    "start": "node server.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/vismitmandlik/ncm-lab.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/vismitmandlik/ncm-lab/issues"
+  },
+  "homepage": "https://github.com/vismitmandlik/ncm-lab#readme",
+  "dependencies": {
+    "dotenv": "^17.4.2",
+    "express": "^5.2.1"
+  }
+}
