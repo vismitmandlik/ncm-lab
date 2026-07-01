@@ -35,15 +35,20 @@ A `.env.example` is provided as a template.
 ## Local Development
 
 ```bash
-# 1. Install Vercel CLI
-npm i -g vercel
+# 1. Install dependencies
+npm install
 
 # 2. Copy env template and fill in the key
 cp .env.example .env.local
+# Edit .env.local and set CIPHER_KEY to the actual value
 
-# 3. Run locally with serverless function support
-vercel dev
+# 3. Start the local server
+npm start
 ```
+
+Open `http://localhost:3000` in your browser.
+
+The local server (`server.js`) uses Express to serve the static files and mount the `/api/decrypt` endpoint — no Vercel CLI required.
 
 ## Deployment
 
