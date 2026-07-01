@@ -1,0 +1,895 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>NCM Debug Tools</title>
+  <style>
+    :root
+    {
+      --bg:       #0d1117;
+      --surface:  #161b22;
+      --surface2: #21262d;
+      --border:   #30363d;
+      --accent:   #58a6ff;
+      --text:     #e6edf3;
+      --muted:    #8b949e;
+      --success:  #3fb950;
+      --error:    #f85149;
+      --warn:     #d29922;
+      --add-bg:   #0d2119;
+      --add-fg:   #3fb950;
+      --rem-bg:   #1c0a0a;
+      --rem-fg:   #f85149;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body
+    {
+      background: var(--bg);
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      font-size: 14px;
+      min-height: 100vh;
+    }
+
+    /* ── Header ── */
+    header
+    {
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      padding: 14px 24px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    header h1 { font-size: 1.15rem; font-weight: 600; }
+    header h1 span { color: var(--accent); }
+
+    /* ── Tabs ── */
+    .tabs
+    {
+      display: flex;
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      padding: 0 24px;
+      gap: 4px;
+    }
+    .tab
+    {
+      padding: 10px 18px;
+      cursor: pointer;
+      border-bottom: 2px solid transparent;
+      color: var(--muted);
+      font-size: 0.88rem;
+      transition: color .15s;
+      user-select: none;
+    }
+    .tab:hover { color: var(--text); }
+    .tab.active { color: var(--accent); border-bottom-color: var(--accent); }
+
+    /* ── Content ── */
+    .content { padding: 24px; max-width: 1100px; margin: 0 auto; }
+    .panel { display: none; }
+    .panel.active { display: block; }
+
+    h2 { font-size: 1rem; font-weight: 600; margin-bottom: 4px; }
+    .subtitle { color: var(--muted); font-size: 0.82rem; margin-bottom: 20px; }
+
+    /* ── Form ── */
+    label { display: block; margin-bottom: 5px; font-size: 0.82rem; color: var(--muted); }
+    .field { margin-bottom: 16px; }
+    .hint { font-size: 0.78rem; color: var(--muted); margin-top: 4px; }
+
+    input[type="text"],
+    input[type="number"],
+    textarea,
+    select
+    {
+      width: 100%;
+      padding: 8px 12px;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      color: var(--text);
+      border-radius: 6px;
+      font-size: 0.88rem;
+      outline: none;
+      transition: border-color .15s;
+    }
+    input:focus, textarea:focus, select:focus { border-color: var(--accent); }
+    textarea { resize: vertical; font-family: 'Consolas', 'Cascadia Code', monospace; }
+
+    .row { display: flex; gap: 16px; flex-wrap: wrap; }
+    .col { flex: 1; min-width: 260px; }
+
+    /* ── Buttons ── */
+    .btn
+    {
+      padding: 7px 16px;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 0.85rem;
+      font-weight: 500;
+      background: var(--surface2);
+      color: var(--text);
+      transition: background .15s, opacity .15s;
+    }
+    .btn:hover { background: var(--border); }
+    .btn-primary { background: var(--accent); color: #0d1117; border-color: var(--accent); }
+    .btn-primary:hover { opacity: .85; }
+    .btn-group { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 14px; }
+
+    /* ── Drop zone ── */
+    .drop-zone
+    {
+      border: 2px dashed var(--border);
+      border-radius: 8px;
+      padding: 22px;
+      text-align: center;
+      cursor: pointer;
+      color: var(--muted);
+      transition: border-color .15s, color .15s;
+      user-select: none;
+    }
+    .drop-zone:hover, .drop-zone.over { border-color: var(--accent); color: var(--text); }
+    .drop-zone input[type="file"] { display: none; }
+    .drop-zone svg { display: block; margin: 0 auto 8px; }
+
+    /* ── Result box ── */
+    .result-wrap { position: relative; }
+    .result
+    {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 14px;
+      min-height: 60px;
+      font-family: 'Consolas', 'Cascadia Code', monospace;
+      font-size: 0.82rem;
+      white-space: pre-wrap;
+      word-break: break-all;
+      max-height: 460px;
+      overflow: auto;
+    }
+    .result.ok  { border-color: var(--success); }
+    .result.err { border-color: var(--error); color: var(--error); }
+
+    .copy-btn
+    {
+      position: absolute;
+      top: 8px; right: 8px;
+      padding: 3px 10px;
+      font-size: 0.75rem;
+    }
+
+    /* ── Badge ── */
+    .badge
+    {
+      display: inline-block;
+      padding: 1px 7px;
+      border-radius: 4px;
+      font-size: 0.72rem;
+      font-weight: 500;
+    }
+    .badge-warn { background: #2d1f00; color: var(--warn); border: 1px solid #6e4a00; }
+
+    /* ── Epoch table ── */
+    .epoch-table { width: 100%; border-collapse: collapse; margin-top: 16px; }
+    .epoch-table th, .epoch-table td
+    {
+      padding: 9px 14px;
+      text-align: left;
+      border-bottom: 1px solid var(--border);
+    }
+    .epoch-table th { color: var(--muted); font-weight: 500; }
+    .epoch-table td:last-child { font-family: monospace; }
+    .epoch-table tr:last-child td { border-bottom: none; }
+
+    /* ── Divider ── */
+    hr { border: none; border-top: 1px solid var(--border); margin: 20px 0; }
+
+    /* ── Diff ── */
+    .diff-out
+    {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      overflow: auto;
+      max-height: 520px;
+      margin-top: 14px;
+    }
+    .diff-line
+    {
+      padding: 1px 14px;
+      font-family: 'Consolas', 'Cascadia Code', monospace;
+      font-size: 0.8rem;
+      white-space: pre;
+    }
+    .diff-line.add { background: var(--add-bg); color: var(--add-fg); }
+    .diff-line.rem { background: var(--rem-bg); color: var(--rem-fg); }
+    .diff-line.ctx { color: var(--muted); }
+    .diff-line.hdr { color: #555; font-style: italic; padding-left: 14px; }
+    .no-diff { color: var(--success); margin-top: 12px; font-size: 0.88rem; }
+
+    /* ── Mode toggle ── */
+    .mode-btn { transition: background .15s, color .15s, border-color .15s; }
+    .mode-btn.on { background: var(--accent); color: #0d1117; border-color: var(--accent); }
+
+    @media (max-width: 640px)
+    {
+      .row { flex-direction: column; }
+      .content { padding: 16px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ─────────────────────────── Header ─────────────────────────────────────── -->
+<header>
+  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#58a6ff" stroke-width="2">
+    <rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/>
+  </svg>
+  <h1>NCM <span>Debug Tools</span></h1>
+</header>
+
+<!-- ─────────────────────────── Tabs ───────────────────────────────────────── -->
+<nav class="tabs">
+  <div class="tab active" data-tab="decrypt">Decrypt Backup</div>
+  <div class="tab"        data-tab="epoch"  >Epoch Converter</div>
+  <div class="tab"        data-tab="jsonxml">JSON / XML</div>
+</nav>
+
+<div class="content">
+
+  <!-- ═══════════════════════ DECRYPT ═══════════════════════════════════════ -->
+  <div class="panel active" id="panel-decrypt">
+    <h2>Config Backup Decryptor</h2>
+    <p class="subtitle">
+      Decrypts <code>running.file.content</code> / <code>startup.file.content</code> fields
+      stored in NCM backup records &mdash; AES-ECB + PKCS7 + Base64.
+    </p>
+
+    <div class="field">
+      <label>
+        Encryption Key &nbsp;<span class="badge badge-warn">internal — do not share URL after filling</span>
+      </label>
+      <input type="text" id="cipher-key" value="COVID-19MOTADATA" maxlength="16" />
+      <p class="hint">Fixed 16-byte key from <code>CipherUtil.java</code>. Change only if it has been rotated.</p>
+    </div>
+
+    <div class="row">
+      <div class="col">
+        <div class="field">
+          <label>Option A &mdash; Upload file</label>
+          <div class="drop-zone" id="drop-zone">
+            <input type="file" id="file-input" />
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/>
+              <polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/>
+            </svg>
+            Drop file here or <strong>click to browse</strong>
+            <div class="hint" id="file-name" style="margin-top:6px"></div>
+          </div>
+        </div>
+      </div>
+      <div class="col">
+        <div class="field">
+          <label>Option B &mdash; Paste Base64-encoded encrypted value</label>
+          <textarea id="cipher-input" rows="5" placeholder="Paste the value of running.file.content or startup.file.content here..."></textarea>
+        </div>
+      </div>
+    </div>
+
+    <div class="btn-group">
+      <button class="btn btn-primary" id="btn-decrypt">Decrypt</button>
+      <button class="btn" id="btn-decrypt-clear">Clear</button>
+    </div>
+
+    <label>Decrypted Output</label>
+    <div class="result-wrap">
+      <div class="result" id="decrypt-out"></div>
+      <button class="btn copy-btn" id="btn-copy-decrypt">Copy</button>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════ EPOCH ═════════════════════════════════════════ -->
+  <div class="panel" id="panel-epoch">
+    <h2>Epoch / Timestamp Converter</h2>
+    <p class="subtitle">Convert epoch values to human-readable timestamps and back.</p>
+
+    <div class="row">
+      <!-- Forward: epoch → datetime -->
+      <div class="col">
+        <h2 style="font-size:0.88rem;margin-bottom:12px">Epoch &rarr; Timestamp</h2>
+        <div class="field">
+          <label>Epoch value</label>
+          <input type="text" id="epoch-input" placeholder="e.g. 1751385600000 or 1751385600" />
+          <p class="hint">13+ digits treated as milliseconds; fewer as seconds.</p>
+        </div>
+        <div class="field">
+          <label>Timezone</label>
+          <select id="tz-select"></select>
+        </div>
+        <div class="btn-group">
+          <button class="btn btn-primary" id="btn-epoch-convert">Convert</button>
+          <button class="btn" id="btn-epoch-now">Now</button>
+          <button class="btn" id="btn-epoch-clear">Clear</button>
+        </div>
+        <div id="epoch-result-wrap" style="display:none">
+          <table class="epoch-table">
+            <thead><tr><th>Format</th><th>Value</th></tr></thead>
+            <tbody id="epoch-rows"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Reverse: datetime → epoch -->
+      <div class="col">
+        <h2 style="font-size:0.88rem;margin-bottom:12px">Timestamp &rarr; Epoch</h2>
+        <div class="field">
+          <label>Datetime string</label>
+          <input type="text" id="ts-input" placeholder="e.g. 2025-07-01T10:30:00+05:30" />
+          <p class="hint">ISO 8601 / RFC 2822 / any format JS can parse.</p>
+        </div>
+        <div class="btn-group">
+          <button class="btn btn-primary" id="btn-ts-convert">Convert</button>
+          <button class="btn" id="btn-ts-clear">Clear</button>
+        </div>
+        <div class="result-wrap">
+          <div class="result" id="ts-out" style="min-height:48px"></div>
+          <button class="btn copy-btn" id="btn-copy-ts">Copy</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════ JSON / XML ════════════════════════════════════ -->
+  <div class="panel" id="panel-jsonxml">
+    <h2>JSON / XML Prettifier &amp; Diff</h2>
+    <p class="subtitle">Prettify or minify payloads; diff two versions side-by-side.</p>
+
+    <div class="btn-group" style="margin-bottom:16px">
+      <button class="btn mode-btn on" data-mode="json">JSON</button>
+      <button class="btn mode-btn"    data-mode="xml" >XML</button>
+    </div>
+
+    <div class="row">
+      <div class="col">
+        <label>Left / Original</label>
+        <textarea id="input-left"  rows="12" placeholder="Paste JSON or XML..."></textarea>
+        <div class="btn-group" style="margin-top:8px">
+          <button class="btn" data-side="left"  data-action="prettify">Prettify</button>
+          <button class="btn" data-side="left"  data-action="minify"  >Minify</button>
+          <button class="btn" data-side="left"  data-action="clear"   >Clear</button>
+          <button class="btn copy-btn" style="position:static" data-side="left" data-action="copy">Copy</button>
+        </div>
+      </div>
+      <div class="col">
+        <label>Right / Modified</label>
+        <textarea id="input-right" rows="12" placeholder="Paste JSON or XML..."></textarea>
+        <div class="btn-group" style="margin-top:8px">
+          <button class="btn" data-side="right" data-action="prettify">Prettify</button>
+          <button class="btn" data-side="right" data-action="minify"  >Minify</button>
+          <button class="btn" data-side="right" data-action="clear"   >Clear</button>
+          <button class="btn copy-btn" style="position:static" data-side="right" data-action="copy">Copy</button>
+        </div>
+      </div>
+    </div>
+
+    <hr />
+
+    <div class="btn-group">
+      <button class="btn btn-primary" id="btn-diff">Show Diff</button>
+      <button class="btn"             id="btn-diff-clear">Clear Diff</button>
+    </div>
+
+    <div id="diff-result"></div>
+  </div>
+
+</div><!-- /content -->
+
+<!-- CryptoJS for AES-ECB support (Web Crypto API lacks ECB mode) -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.2.0/crypto-js.min.js"
+        integrity="sha512-a+SUDuwNzXDvz4XrIcXHuCFjOr+Wy3J0fGBEKGSen5lHhgWFaCzHHV5xSEXdUbrNbpMBeJzDMGEobOKjbYCw=="
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+<script>
+/* ═══════════════════════════════════════════════════════════════════════════
+   TABS
+═══════════════════════════════════════════════════════════════════════════ */
+document.querySelectorAll('.tab').forEach(function (tab)
+{
+  tab.addEventListener('click', function ()
+  {
+    document.querySelectorAll('.tab').forEach(function (t) { t.classList.remove('active'); });
+    document.querySelectorAll('.panel').forEach(function (p) { p.classList.remove('active'); });
+    tab.classList.add('active');
+    document.getElementById('panel-' + tab.dataset.tab).classList.add('active');
+  });
+});
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   DECRYPT
+═══════════════════════════════════════════════════════════════════════════ */
+var fileContent = null;
+var dropZone    = document.getElementById('drop-zone');
+var fileInput   = document.getElementById('file-input');
+
+dropZone.addEventListener('click', function () { fileInput.click(); });
+dropZone.addEventListener('dragover', function (e)
+{
+  e.preventDefault();
+  dropZone.classList.add('over');
+});
+dropZone.addEventListener('dragleave', function () { dropZone.classList.remove('over'); });
+dropZone.addEventListener('drop', function (e)
+{
+  e.preventDefault();
+  dropZone.classList.remove('over');
+  if (e.dataTransfer.files[0]) { readFile(e.dataTransfer.files[0]); }
+});
+fileInput.addEventListener('change', function ()
+{
+  if (fileInput.files[0]) { readFile(fileInput.files[0]); }
+});
+
+function readFile(file)
+{
+  document.getElementById('file-name').textContent = file.name;
+  var reader = new FileReader();
+  reader.onload = function (e) { fileContent = e.target.result.trim(); };
+  reader.readAsText(file);
+}
+
+document.getElementById('btn-decrypt').addEventListener('click', function ()
+{
+  var key   = document.getElementById('cipher-key').value.trim();
+  var paste = document.getElementById('cipher-input').value.trim();
+  var raw   = fileContent || paste;
+  var out   = document.getElementById('decrypt-out');
+
+  if (!raw)
+  {
+    showResult(out, 'Provide encrypted content via file upload or paste.', 'err');
+    return;
+  }
+  if (key.length !== 16)
+  {
+    showResult(out, 'Key must be exactly 16 characters (128-bit AES).', 'err');
+    return;
+  }
+
+  try
+  {
+    var keyParsed = CryptoJS.enc.Utf8.parse(key);
+    var cipher    = CryptoJS.lib.CipherParams.create(
+      { ciphertext: CryptoJS.enc.Base64.parse(raw) }
+    );
+    var decrypted = CryptoJS.AES.decrypt(cipher, keyParsed,
+      { mode: CryptoJS.mode.ECB, padding: CryptoJS.pad.Pkcs7 }
+    );
+    var result = decrypted.toString(CryptoJS.enc.Utf8);
+    if (!result)
+    {
+      throw new Error('Decrypted result is empty — wrong key or data is not AES-ECB-Base64.');
+    }
+    showResult(out, result, 'ok');
+  }
+  catch (e)
+  {
+    showResult(out, 'Decryption failed: ' + e.message, 'err');
+  }
+});
+
+document.getElementById('btn-decrypt-clear').addEventListener('click', function ()
+{
+  document.getElementById('cipher-input').value = '';
+  document.getElementById('file-name').textContent = '';
+  fileContent = null;
+  fileInput.value = '';
+  var out = document.getElementById('decrypt-out');
+  out.textContent = '';
+  out.className = 'result';
+});
+
+document.getElementById('btn-copy-decrypt').addEventListener('click', function ()
+{
+  copyText(document.getElementById('decrypt-out').textContent, this);
+});
+
+function showResult(el, text, cls)
+{
+  el.textContent = text;
+  el.className   = 'result' + (cls ? ' ' + cls : '');
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   EPOCH
+═══════════════════════════════════════════════════════════════════════════ */
+var tzSelect = document.getElementById('tz-select');
+var localTz  = Intl.DateTimeFormat().resolvedOptions().timeZone;
+var ZONES = [
+  'UTC', 'Asia/Kolkata', 'America/New_York', 'America/Los_Angeles',
+  'America/Chicago', 'Europe/London', 'Europe/Paris',
+  'Asia/Tokyo', 'Asia/Shanghai', 'Australia/Sydney'
+];
+var zoneSet = [localTz];
+ZONES.forEach(function (z) { if (z !== localTz) { zoneSet.push(z); } });
+zoneSet.forEach(function (z)
+{
+  var opt = document.createElement('option');
+  opt.value = z;
+  opt.textContent = z;
+  if (z === localTz) { opt.selected = true; }
+  tzSelect.appendChild(opt);
+});
+
+function toMs(val)
+{
+  var n = Number(val);
+  if (isNaN(n) || !val.trim()) { return null; }
+  return String(Math.abs(Math.round(n))).length >= 13 ? Math.round(n) : Math.round(n) * 1000;
+}
+
+function fmtInTz(ms, tz)
+{
+  return new Intl.DateTimeFormat('en-US',
+  {
+    timeZone:   tz,
+    year:       'numeric',
+    month:      '2-digit',
+    day:        '2-digit',
+    hour:       '2-digit',
+    minute:     '2-digit',
+    second:     '2-digit',
+    hour12:     false,
+    timeZoneName: 'short'
+  }).format(new Date(ms));
+}
+
+function relativeTime(ms)
+{
+  var diff  = Date.now() - ms;
+  var abs   = Math.abs(diff);
+  var past  = diff > 0;
+  var units = [
+    [365 * 24 * 3600000, 'year'],
+    [30  * 24 * 3600000, 'month'],
+    [24  * 3600000,      'day'],
+    [3600000,            'hour'],
+    [60000,              'minute'],
+    [1000,               'second']
+  ];
+  for (var i = 0; i < units.length; i++)
+  {
+    var n = Math.floor(abs / units[i][0]);
+    if (n >= 1)
+    {
+      var label = units[i][1] + (n > 1 ? 's' : '');
+      return past ? n + ' ' + label + ' ago' : 'in ' + n + ' ' + label;
+    }
+  }
+  return 'just now';
+}
+
+document.getElementById('btn-epoch-convert').addEventListener('click', convertEpoch);
+document.getElementById('epoch-input').addEventListener('keydown', function (e)
+{
+  if (e.key === 'Enter') { convertEpoch(); }
+});
+
+function convertEpoch()
+{
+  var val = document.getElementById('epoch-input').value.trim();
+  var tz  = tzSelect.value;
+  var ms  = toMs(val);
+  var wrap = document.getElementById('epoch-result-wrap');
+  if (!ms) { wrap.style.display = 'none'; return; }
+
+  var d = new Date(ms);
+  var rows = [
+    ['Epoch (ms)',      ms],
+    ['Epoch (s)',       Math.floor(ms / 1000)],
+    [tz,               fmtInTz(ms, tz)],
+    ['UTC',            d.toUTCString()],
+    ['ISO 8601',       d.toISOString()],
+    ['Local browser',  d.toLocaleString()],
+    ['Relative',       relativeTime(ms)]
+  ];
+
+  var tbody = document.getElementById('epoch-rows');
+  tbody.innerHTML = rows.map(function (r)
+  {
+    return '<tr><td>' + r[0] + '</td><td>' + r[1] + '</td></tr>';
+  }).join('');
+  wrap.style.display = 'block';
+}
+
+document.getElementById('btn-epoch-now').addEventListener('click', function ()
+{
+  document.getElementById('epoch-input').value = Date.now();
+  convertEpoch();
+});
+
+document.getElementById('btn-epoch-clear').addEventListener('click', function ()
+{
+  document.getElementById('epoch-input').value = '';
+  document.getElementById('epoch-result-wrap').style.display = 'none';
+});
+
+document.getElementById('btn-ts-convert').addEventListener('click', convertTs);
+document.getElementById('ts-input').addEventListener('keydown', function (e)
+{
+  if (e.key === 'Enter') { convertTs(); }
+});
+
+function convertTs()
+{
+  var val = document.getElementById('ts-input').value.trim();
+  var ms  = Date.parse(val);
+  var out = document.getElementById('ts-out');
+  if (isNaN(ms))
+  {
+    showResult(out, 'Cannot parse — try ISO 8601: 2025-07-01T10:30:00+05:30', 'err');
+  }
+  else
+  {
+    showResult(out, 'Epoch (ms): ' + ms + '\nEpoch (s):  ' + Math.floor(ms / 1000), 'ok');
+  }
+}
+
+document.getElementById('btn-ts-clear').addEventListener('click', function ()
+{
+  document.getElementById('ts-input').value = '';
+  var out = document.getElementById('ts-out');
+  out.textContent = '';
+  out.className   = 'result';
+});
+
+document.getElementById('btn-copy-ts').addEventListener('click', function ()
+{
+  copyText(document.getElementById('ts-out').textContent, this);
+});
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   JSON / XML
+═══════════════════════════════════════════════════════════════════════════ */
+var currentMode = 'json';
+
+document.querySelectorAll('.mode-btn').forEach(function (btn)
+{
+  btn.addEventListener('click', function ()
+  {
+    currentMode = btn.dataset.mode;
+    document.querySelectorAll('.mode-btn').forEach(function (b)
+    {
+      b.classList.toggle('on', b.dataset.mode === currentMode);
+    });
+  });
+});
+
+function parseAndFormat(text)
+{
+  if (currentMode === 'json')
+  {
+    return JSON.stringify(JSON.parse(text), null, 2);
+  }
+  var parser = new DOMParser();
+  var doc    = parser.parseFromString(text.trim(), 'application/xml');
+  var err    = doc.querySelector('parsererror');
+  if (err) { throw new Error(err.textContent.split('\n')[0]); }
+  return prettyXml(new XMLSerializer().serializeToString(doc));
+}
+
+function prettyXml(xml)
+{
+  var indent = 0;
+  var result = '';
+  var parts  = xml.replace(/>\s*</g, '><').split(/(<[^>]+>)/g);
+  parts.forEach(function (node)
+  {
+    if (!node.trim()) { return; }
+    if (/^<\//.test(node)) { indent = Math.max(0, indent - 1); }
+    result += '  '.repeat(indent) + node + '\n';
+    if (/^<[^/!?]/.test(node) && !/>$/.test(node.slice(0, -1)) === false
+        && !/\/>$/.test(node) && !/<\//.test(node))
+    {
+      indent++;
+    }
+  });
+  return result.trim();
+}
+
+document.querySelectorAll('[data-action]').forEach(function (btn)
+{
+  btn.addEventListener('click', function ()
+  {
+    var side   = btn.dataset.side;
+    var action = btn.dataset.action;
+    var el     = document.getElementById('input-' + side);
+
+    if (action === 'prettify')
+    {
+      try
+      {
+        el.value = parseAndFormat(el.value);
+        flashBorder(el, 'var(--success)');
+      }
+      catch (e)
+      {
+        flashBorder(el, 'var(--error)');
+        alert('Parse error: ' + e.message);
+      }
+    }
+    else if (action === 'minify')
+    {
+      try
+      {
+        if (currentMode === 'json')
+        {
+          el.value = JSON.stringify(JSON.parse(el.value));
+        }
+        else
+        {
+          el.value = el.value.replace(/>\s+</g, '><').replace(/\s{2,}/g, ' ').trim();
+        }
+        flashBorder(el, 'var(--success)');
+      }
+      catch (e)
+      {
+        flashBorder(el, 'var(--error)');
+        alert('Parse error: ' + e.message);
+      }
+    }
+    else if (action === 'clear')
+    {
+      el.value = '';
+    }
+    else if (action === 'copy')
+    {
+      copyText(el.value, btn);
+    }
+  });
+});
+
+function flashBorder(el, color)
+{
+  el.style.borderColor = color;
+  setTimeout(function () { el.style.borderColor = ''; }, 1800);
+}
+
+document.getElementById('btn-diff').addEventListener('click', runDiff);
+document.getElementById('btn-diff-clear').addEventListener('click', function ()
+{
+  document.getElementById('diff-result').innerHTML = '';
+});
+
+function runDiff()
+{
+  var left  = document.getElementById('input-left').value;
+  var right = document.getElementById('input-right').value;
+
+  try { left  = parseAndFormat(left);  } catch (e) { /* keep raw */ }
+  try { right = parseAndFormat(right); } catch (e) { /* keep raw */ }
+
+  var leftLines  = left.split('\n');
+  var rightLines = right.split('\n');
+  var diff       = lcsLineDiff(leftLines, rightLines);
+  var container  = document.getElementById('diff-result');
+
+  var hasChanges = diff.some(function (d) { return d[0] !== 0; });
+  if (!hasChanges)
+  {
+    container.innerHTML = '<p class="no-diff">No differences found &mdash; both sides are identical.</p>';
+    return;
+  }
+
+  var collapsed = collapseContext(diff, 3);
+  var html = '<div class="diff-out">';
+  collapsed.forEach(function (d)
+  {
+    var esc = d[1].replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    if (d[0] === 'hdr')
+    {
+      html += '<div class="diff-line hdr">' + esc + '</div>';
+    }
+    else
+    {
+      var cls    = d[0] ===  1 ? 'add' : d[0] === -1 ? 'rem' : 'ctx';
+      var prefix = d[0] ===  1 ? '+  ' : d[0] === -1 ? '-  ' : '   ';
+      html += '<div class="diff-line ' + cls + '">' + prefix + esc + '</div>';
+    }
+  });
+  html += '</div>';
+  container.innerHTML = html;
+}
+
+function lcsLineDiff(left, right)
+{
+  var m  = left.length;
+  var n  = right.length;
+  /* LCS via DP — keep sizes manageable with a 4000-line cap per side */
+  var ML = Math.min(m, 4000);
+  var NL = Math.min(n, 4000);
+  var dp = [];
+  var i, j;
+  for (i = 0; i <= ML; i++) { dp[i] = new Array(NL + 1).fill(0); }
+  for (i = ML - 1; i >= 0; i--)
+  {
+    for (j = NL - 1; j >= 0; j--)
+    {
+      dp[i][j] = left[i] === right[j]
+        ? dp[i + 1][j + 1] + 1
+        : Math.max(dp[i + 1][j], dp[i][j + 1]);
+    }
+  }
+  var result = [];
+  i = 0; j = 0;
+  while (i < ML || j < NL)
+  {
+    if (i < ML && j < NL && left[i] === right[j])
+    {
+      result.push([0, left[i]]); i++; j++;
+    }
+    else if (j < NL && (i >= ML || dp[i][j + 1] >= dp[i + 1][j]))
+    {
+      result.push([1, right[j]]); j++;
+    }
+    else
+    {
+      result.push([-1, left[i]]); i++;
+    }
+  }
+  /* append any truncated tail lines */
+  while (i < m) { result.push([-1, left[i++]]); }
+  while (j < n) { result.push([1, right[j++]]); }
+  return result;
+}
+
+function collapseContext(diff, ctx)
+{
+  var keep = new Set();
+  diff.forEach(function (d, idx)
+  {
+    if (d[0] !== 0)
+    {
+      for (var k = Math.max(0, idx - ctx); k <= Math.min(diff.length - 1, idx + ctx); k++)
+      {
+        keep.add(k);
+      }
+    }
+  });
+  var result   = [];
+  var skipping = false;
+  diff.forEach(function (d, idx)
+  {
+    if (keep.has(idx))
+    {
+      skipping = false;
+      result.push(d);
+    }
+    else if (!skipping)
+    {
+      result.push(['hdr', '   ···']);
+      skipping = true;
+    }
+  });
+  return result;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   UTILITY
+═══════════════════════════════════════════════════════════════════════════ */
+function copyText(text, btn)
+{
+  if (!text.trim()) { return; }
+  navigator.clipboard.writeText(text).then(function ()
+  {
+    var orig = btn.textContent;
+    btn.textContent = 'Copied!';
+    setTimeout(function () { btn.textContent = orig; }, 1500);
+  });
+}
+</script>
+</body>
+</html>
