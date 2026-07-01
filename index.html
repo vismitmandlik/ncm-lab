@@ -761,7 +761,7 @@
     .json-num   { color: #f0b429; }                     /* amber        — numbers(accent)*/
     .json-bool  { color: #56c8c8; }                     /* vivid teal   — true / false   */
     .json-null  { color: #a9a9c5; font-style: italic; } /* soft lavender— null           */
-    .json-punct { color: #566080; }                     /* dim navy     — { } [ ] : ,    */
+    .json-punct { color: #6b7ba8; }                     /* muted blue   — { } [ ] : ,    */
 
     /* Light theme overrides */
     @media (prefers-color-scheme: light)
@@ -784,9 +784,16 @@
     html.theme-dark  .json-num   { color: #f0b429; }
     html.theme-dark  .json-bool  { color: #56c8c8; }
     html.theme-dark  .json-null  { color: #a9a9c5; font-style: italic; }
-    html.theme-dark  .json-punct { color: #566080; }
+    html.theme-dark  .json-punct { color: #6b7ba8; }
 
     /* ── JSON line-number table (decode output) ──────────────────────────── */
+    /* Flush the table to the result box edges — no padding when viewer present */
+    .result:has(.json-viewer)
+    {
+      padding: 0 50px 0 0;
+      white-space: normal;
+    }
+
     .json-viewer
     {
       border-collapse: collapse;
@@ -795,24 +802,29 @@
       font-size: inherit;
       line-height: inherit;
     }
+    .json-viewer tr:hover td
+    {
+      background: rgba(255, 255, 255, .03);
+    }
     .json-ln
     {
       width: 1%;
       white-space: nowrap;
       text-align: right;
-      padding: 0 14px 0 8px;
+      padding: 0 12px 0 16px;
       color: var(--color-fg-subtle);
-      border-right: 1px solid var(--color-border-muted);
+      border-right: 1px solid var(--color-border-default);
       user-select: none;
       -webkit-user-select: none;
-      font-size: 0.82em;
+      font-size: 0.8em;
       vertical-align: top;
       line-height: inherit;
-      opacity: .6;
+      opacity: .5;
+      min-width: 2ch;
     }
     .json-line
     {
-      padding-left: 14px;
+      padding-left: 16px;
       white-space: pre;
       vertical-align: top;
       line-height: inherit;
