@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>NCM Debug Tools</title>
+  <title>NCM DevKit</title>
   <style>
     :root
     {
@@ -229,7 +229,7 @@
   <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#58a6ff" stroke-width="2">
     <rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/>
   </svg>
-  <h1>NCM <span>Debug Tools</span></h1>
+  <h1>NCM <span>DevKit</span></h1>
 </header>
 
 <!-- ─────────────────────────── Tabs ───────────────────────────────────────── -->
@@ -248,14 +248,6 @@
       Decrypts <code>running.file.content</code> / <code>startup.file.content</code> fields
       stored in NCM backup records &mdash; AES-ECB + PKCS7 + Base64.
     </p>
-
-    <div class="field">
-      <label>
-        Encryption Key &nbsp;<span class="badge badge-warn">internal — do not share URL after filling</span>
-      </label>
-      <input type="text" id="cipher-key" value="COVID-19MOTADATA" maxlength="16" />
-      <p class="hint">Fixed 16-byte key from <code>CipherUtil.java</code>. Change only if it has been rotated.</p>
-    </div>
 
     <div class="row">
       <div class="col">
@@ -388,11 +380,6 @@
 
 </div><!-- /content -->
 
-<!-- CryptoJS for AES-ECB support (Web Crypto API lacks ECB mode) -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.2.0/crypto-js.min.js"
-        integrity="sha512-a+SUDuwNzXDvz4XrIcXHuCFjOr+Wy3J0fGBEKGSen5lHhgWFaCzHHV5xSEXdUbrNbpMBeJzDMGEobOKjbYCw=="
-        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-
 <script>
 /* ═══════════════════════════════════════════════════════════════════════════
    TABS
@@ -443,42 +430,48 @@ function readFile(file)
 
 document.getElementById('btn-decrypt').addEventListener('click', function ()
 {
-  var key   = document.getElementById('cipher-key').value.trim();
   var paste = document.getElementById('cipher-input').value.trim();
   var raw   = fileContent || paste;
   var out   = document.getElementById('decrypt-out');
+  var btn   = document.getElementById('btn-decrypt');
 
   if (!raw)
   {
     showResult(out, 'Provide encrypted content via file upload or paste.', 'err');
     return;
   }
-  if (key.length !== 16)
-  {
-    showResult(out, 'Key must be exactly 16 characters (128-bit AES).', 'err');
-    return;
-  }
 
-  try
+  btn.disabled    = true;
+  btn.textContent = 'Decrypting…';
+  showResult(out, '', '');
+
+  fetch('/api/decrypt',
   {
-    var keyParsed = CryptoJS.enc.Utf8.parse(key);
-    var cipher    = CryptoJS.lib.CipherParams.create(
-      { ciphertext: CryptoJS.enc.Base64.parse(raw) }
-    );
-    var decrypted = CryptoJS.AES.decrypt(cipher, keyParsed,
-      { mode: CryptoJS.mode.ECB, padding: CryptoJS.pad.Pkcs7 }
-    );
-    var result = decrypted.toString(CryptoJS.enc.Utf8);
-    if (!result)
+    method:  'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body:    JSON.stringify({ ciphertext: raw })
+  })
+  .then(function (res) { return res.json().then(function (data) { return { ok: res.ok, data: data }; }); })
+  .then(function (r)
+  {
+    if (r.ok)
     {
-      throw new Error('Decrypted result is empty — wrong key or data is not AES-ECB-Base64.');
+      showResult(out, r.data.plaintext, 'ok');
     }
-    showResult(out, result, 'ok');
-  }
-  catch (e)
+    else
+    {
+      showResult(out, r.data.error || 'Unknown server error.', 'err');
+    }
+  })
+  .catch(function (e)
   {
-    showResult(out, 'Decryption failed: ' + e.message, 'err');
-  }
+    showResult(out, 'Request failed: ' + e.message, 'err');
+  })
+  .finally(function ()
+  {
+    btn.disabled    = false;
+    btn.textContent = 'Decrypt';
+  });
 });
 
 document.getElementById('btn-decrypt-clear').addEventListener('click', function ()
