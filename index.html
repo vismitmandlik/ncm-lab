@@ -755,36 +755,68 @@
     }
 
     /* ── JSON syntax highlighting ───────────────────────────────────────── */
-    /* Dark theme (defaults) */
-    .json-key   { color: #7db9e8; }                     /* steel blue  — property names  */
-    .json-str   { color: #98c379; }                     /* sage green  — string values   */
-    .json-num   { color: #f0b429; }                     /* amber       — numbers (accent)*/
-    .json-bool  { color: #c586c0; }                     /* soft purple — true / false    */
-    .json-null  { color: #c586c0; font-style: italic; } /* soft purple — null            */
-    .json-punct { color: #3e4d6a; }                     /* dim navy    — { } [ ] : ,     */
+    /* Vibrant palette — inspired by One Dark Pro / Tokyo Night / Dracula   */
+    .json-key   { color: #e06c75; }                     /* coral red    — property names */
+    .json-str   { color: #9acc76; }                     /* vivid green  — string values  */
+    .json-num   { color: #f0b429; }                     /* amber        — numbers(accent)*/
+    .json-bool  { color: #56c8c8; }                     /* vivid teal   — true / false   */
+    .json-null  { color: #a9a9c5; font-style: italic; } /* soft lavender— null           */
+    .json-punct { color: #566080; }                     /* dim navy     — { } [ ] : ,    */
 
     /* Light theme overrides */
     @media (prefers-color-scheme: light)
     {
-      .json-key   { color: #0051a0; }
-      .json-str   { color: #116329; }
+      .json-key   { color: #c4001d; }
+      .json-str   { color: #1a7a1a; }
       .json-num   { color: #7c4200; }
-      .json-bool  { color: #7c3aed; }
-      .json-null  { color: #7c3aed; font-style: italic; }
-      .json-punct { color: #aaa8b8; }
+      .json-bool  { color: #0070a0; }
+      .json-null  { color: #7060a0; font-style: italic; }
+      .json-punct { color: #8a9ab8; }
     }
-    html.theme-light .json-key   { color: #0051a0; }
-    html.theme-light .json-str   { color: #116329; }
+    html.theme-light .json-key   { color: #c4001d; }
+    html.theme-light .json-str   { color: #1a7a1a; }
     html.theme-light .json-num   { color: #7c4200; }
-    html.theme-light .json-bool  { color: #7c3aed; }
-    html.theme-light .json-null  { color: #7c3aed; font-style: italic; }
-    html.theme-light .json-punct { color: #aaa8b8; }
-    html.theme-dark  .json-key   { color: #7db9e8; }
-    html.theme-dark  .json-str   { color: #98c379; }
+    html.theme-light .json-bool  { color: #0070a0; }
+    html.theme-light .json-null  { color: #7060a0; font-style: italic; }
+    html.theme-light .json-punct { color: #8a9ab8; }
+    html.theme-dark  .json-key   { color: #e06c75; }
+    html.theme-dark  .json-str   { color: #9acc76; }
     html.theme-dark  .json-num   { color: #f0b429; }
-    html.theme-dark  .json-bool  { color: #c586c0; }
-    html.theme-dark  .json-null  { color: #c586c0; font-style: italic; }
-    html.theme-dark  .json-punct { color: #3e4d6a; }
+    html.theme-dark  .json-bool  { color: #56c8c8; }
+    html.theme-dark  .json-null  { color: #a9a9c5; font-style: italic; }
+    html.theme-dark  .json-punct { color: #566080; }
+
+    /* ── JSON line-number table (decode output) ──────────────────────────── */
+    .json-viewer
+    {
+      border-collapse: collapse;
+      width: 100%;
+      font-family: inherit;
+      font-size: inherit;
+      line-height: inherit;
+    }
+    .json-ln
+    {
+      width: 1%;
+      white-space: nowrap;
+      text-align: right;
+      padding: 0 14px 0 8px;
+      color: var(--color-fg-subtle);
+      border-right: 1px solid var(--color-border-muted);
+      user-select: none;
+      -webkit-user-select: none;
+      font-size: 0.82em;
+      vertical-align: top;
+      line-height: inherit;
+      opacity: .6;
+    }
+    .json-line
+    {
+      padding-left: 14px;
+      white-space: pre;
+      vertical-align: top;
+      line-height: inherit;
+    }
 
     /* ── Animations ─────────────────────────────────────────────────────── */
     @keyframes fadeUp
@@ -1524,7 +1556,13 @@ document.getElementById('btn-decode-clear').addEventListener('click', function (
 
 document.getElementById('btn-copy-decode').addEventListener('click', function ()
 {
-  copyText(document.getElementById('decode-out').textContent, this);
+  var el        = document.getElementById('decode-out');
+  var jsonLines = el.querySelectorAll('.json-line');
+  /* If the result is a JSON table, copy only the code column (skip gutter) */
+  var text = jsonLines.length
+    ? Array.prototype.map.call(jsonLines, function (td) { return td.textContent; }).join('\n')
+    : el.textContent;
+  copyText(text, this);
 });
 
 document.getElementById('decode-input').addEventListener('keydown', function (e)
@@ -1537,11 +1575,12 @@ document.getElementById('decode-input').addEventListener('keydown', function (e)
 });
 
 /* ── JSON syntax highlighter ──────────────────────────────────────────────
-   Character-by-character tokenizer. Safe: all non-tag content is HTML-escaped
-   before insertion. textContent on the result element still returns plain text
-   (no span tags), so the copy button copies clean JSON as-is.
+   tokenizeJSON  — character-by-character, returns HTML string with spans.
+                   All literal content is HTML-escaped before insertion.
+   colorizeJSON  — wraps tokenizeJSON output in a line-number table so the
+                   gutter numbers are non-selectable and copy-safe.
    ────────────────────────────────────────────────────────────────────────── */
-function colorizeJSON(str)
+function tokenizeJSON(str)
 {
   function esc(s)
   {
@@ -1599,9 +1638,9 @@ function colorizeJSON(str)
     }
 
     /* ── Keywords ──────────────────────────────────────────────────────── */
-    if (str.slice(i, i + 4) === 'true')  { html += '<span class="json-bool">true</span>';       i += 4; continue; }
-    if (str.slice(i, i + 5) === 'false') { html += '<span class="json-bool">false</span>';      i += 5; continue; }
-    if (str.slice(i, i + 4) === 'null')  { html += '<span class="json-null">null</span>';       i += 4; continue; }
+    if (str.slice(i, i + 4) === 'true')  { html += '<span class="json-bool">true</span>';  i += 4; continue; }
+    if (str.slice(i, i + 5) === 'false') { html += '<span class="json-bool">false</span>'; i += 5; continue; }
+    if (str.slice(i, i + 4) === 'null')  { html += '<span class="json-null">null</span>';  i += 4; continue; }
 
     /* ── Structural punctuation ────────────────────────────────────────── */
     if ('{[}],'.indexOf(ch) !== -1 || ch === ':')
@@ -1617,6 +1656,25 @@ function colorizeJSON(str)
   }
 
   return html;
+}
+
+function colorizeJSON(str)
+{
+  /* Tokenize the full string, then split on newlines to build gutter rows.
+     Pretty-printed JSON never has real newlines inside string values
+     (they're escaped as \n), so splitting on \n is safe. */
+  var tokenized = tokenizeJSON(str);
+  var lines     = tokenized.split('\n');
+
+  var rows = '';
+  for (var i = 0; i < lines.length; i++)
+  {
+    rows += '<tr>'
+          + '<td class="json-ln">' + (i + 1) + '</td>'
+          + '<td class="json-line">' + lines[i] + '</td>'
+          + '</tr>';
+  }
+  return '<table class="json-viewer"><tbody>' + rows + '</tbody></table>';
 }
 
 function showResult(el, text, cls, opts)
@@ -1930,7 +1988,7 @@ function runDiff()
   collapsed.forEach(function (d)
   {
     var lineHtml = jsonDiff
-      ? colorizeJSON(d[1])
+      ? tokenizeJSON(d[1])
       : d[1].replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
 
     if (d[0] === 'hdr')
