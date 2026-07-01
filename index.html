@@ -234,9 +234,10 @@
 
 <!-- ─────────────────────────── Tabs ───────────────────────────────────────── -->
 <nav class="tabs">
-  <div class="tab active" data-tab="decrypt">Decrypt Backup</div>
-  <div class="tab"        data-tab="epoch"  >Epoch Converter</div>
-  <div class="tab"        data-tab="jsonxml">JSON / XML</div>
+  <div class="tab active" data-tab="decrypt"   >Decrypt Backup</div>
+  <div class="tab"        data-tab="epoch"     >Epoch Converter</div>
+  <div class="tab"        data-tab="jsonxml"   >JSON / XML</div>
+  <div class="tab"        data-tab="decompress">Snappy Decompress</div>
 </nav>
 
 <div class="content">
@@ -376,6 +377,32 @@
     </div>
 
     <div id="diff-result"></div>
+  </div>
+
+  <!-- ═══════════════════════ SNAPPY DECOMPRESS ════════════════════════════ -->
+  <div class="panel" id="panel-decompress">
+    <h2>Snappy Decompress</h2>
+    <p class="subtitle">
+      Decompresses Snappy + Base64URL encoded fields — e.g. <code>config.conflict.context</code>
+      returned by the config-conflict API. These fields are <strong>not</strong> AES-encrypted;
+      they go through <code>CodecUtil.compress()</code> (Snappy) only.
+    </p>
+
+    <div class="field">
+      <label>Base64URL-encoded Snappy data</label>
+      <textarea id="decompress-input" rows="6" placeholder="Paste the value of config.conflict.context or any Snappy-compressed Base64URL field here..."></textarea>
+    </div>
+
+    <div class="btn-group">
+      <button class="btn btn-primary" id="btn-decompress">Decompress</button>
+      <button class="btn"             id="btn-decompress-clear">Clear</button>
+    </div>
+
+    <label>Decompressed Output</label>
+    <div class="result-wrap">
+      <div class="result" id="decompress-out"></div>
+      <button class="btn copy-btn" id="btn-copy-decompress">Copy</button>
+    </div>
   </div>
 
 </div><!-- /content -->
@@ -883,6 +910,71 @@ function copyText(text, btn)
     setTimeout(function () { btn.textContent = orig; }, 1500);
   });
 }
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   SNAPPY DECOMPRESS
+═══════════════════════════════════════════════════════════════════════════ */
+document.getElementById('btn-decompress').addEventListener('click', function ()
+{
+  var data = document.getElementById('decompress-input').value.trim();
+  var out  = document.getElementById('decompress-out');
+  var btn  = document.getElementById('btn-decompress');
+
+  if (!data)
+  {
+    showResult(out, 'Paste Base64URL Snappy data to decompress.', 'err');
+    return;
+  }
+
+  btn.disabled    = true;
+  btn.textContent = 'Decompressing…';
+  showResult(out, '', '');
+
+  fetch('/api/decompress',
+  {
+    method:  'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body:    JSON.stringify({ data: data })
+  })
+  .then(function (res) { return res.json().then(function (d) { return { ok: res.ok, data: d }; }); })
+  .then(function (r)
+  {
+    if (r.ok)
+    {
+      // If server parsed it as JSON, pretty-print it
+      var text = r.data.json
+        ? JSON.stringify(r.data.json, null, 2)
+        : r.data.result;
+      showResult(out, text, 'ok');
+    }
+    else
+    {
+      showResult(out, r.data.error || 'Unknown server error.', 'err');
+    }
+  })
+  .catch(function (e)
+  {
+    showResult(out, 'Request failed: ' + e.message, 'err');
+  })
+  .finally(function ()
+  {
+    btn.disabled    = false;
+    btn.textContent = 'Decompress';
+  });
+});
+
+document.getElementById('btn-decompress-clear').addEventListener('click', function ()
+{
+  document.getElementById('decompress-input').value = '';
+  var out = document.getElementById('decompress-out');
+  out.textContent = '';
+  out.className   = 'result';
+});
+
+document.getElementById('btn-copy-decompress').addEventListener('click', function ()
+{
+  copyText(document.getElementById('decompress-out').textContent, this);
+});
 </script>
 </body>
 </html>
