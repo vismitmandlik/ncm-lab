@@ -116,10 +116,12 @@
       background: var(--color-bg-base);
       color: var(--color-fg-default);
       font-family: 'DM Sans', -apple-system, sans-serif;
-      font-size: 15px;
+      font-size: 16px;
       font-weight: 400;
       line-height: 1.6;
       min-height: 100vh;
+      display: flex;
+      flex-direction: column;
       -webkit-font-smoothing: antialiased;
     }
 
@@ -134,7 +136,7 @@
       align-items: center;
       gap: 14px;
     }
-    header h1 { font-size: 1.1rem; font-weight: 600; letter-spacing: -0.01em; }
+    header h1 { font-size: 1.25rem; font-weight: 600; letter-spacing: -0.02em; }
     header h1 span { color: var(--color-accent); font-weight: 300; }
 
     /* ── Tabs ── */
@@ -152,8 +154,8 @@
     .tabs::-webkit-scrollbar { display: none; }
     .tab
     {
-      padding: 18px 24px;
-      font-size: 0.875rem;
+      padding: 18px 28px;
+      font-size: 0.9375rem;
       font-weight: 500;
       color: var(--color-fg-muted);
       cursor: pointer;
@@ -171,12 +173,12 @@
       border-bottom-color: var(--color-accent);
     }
     /* ── Content ── */
-    .content { padding: 40px 40px; max-width: 1400px; margin: 0 auto; width: 100%; }
+    .content { padding: 40px 48px; width: 100%; flex: 1; box-sizing: border-box; }
     .panel { display: none; }
     .panel.active { display: block; }
 
-    h2 { font-size: 1.1rem; font-weight: 700; margin-bottom: 6px; letter-spacing: -0.01em; }
-    .subtitle { color: var(--muted); font-size: 1rem; margin-bottom: 24px; line-height: 1.6; }
+    h2 { font-size: 1.35rem; font-weight: 600; margin-bottom: 10px; letter-spacing: -0.02em; color: var(--color-fg-default); }
+    .subtitle { color: var(--color-fg-muted); font-size: 1rem; margin-bottom: 28px; line-height: 1.65; }
 
     /* ── Form ── */
     label { display: block; margin-bottom: 7px; font-size: 1rem; color: var(--muted); }
@@ -815,56 +817,60 @@
 
     /* ── Responsive ─────────────────────────────────────────────────────── */
 
-    /* Large screens */
+    /* Large screens (≥ 1600 px) */
     @media (min-width: 1600px)
     {
-      .content { padding: 48px 60px; }
-      .tab { padding: 18px 32px; }
-      header { padding: 0 60px; }
-      .tabs { padding: 0 60px; }
+      body { font-size: 17px; }
+      .content { padding: 52px 72px; }
+      .tab { padding: 20px 36px; font-size: 1rem; }
+      header { padding: 0 72px; height: 66px; }
+      .tabs { padding: 0 72px; }
     }
 
-    /* Tablet */
+    /* Standard desktop (1025 – 1599 px): already covered by defaults */
+
+    /* Tablet (≤ 1024 px) */
     @media (max-width: 1024px)
     {
-      .content { padding: 28px 28px; }
-      header { padding: 0 28px; }
-      .tabs { padding: 0 28px; }
-      .tab { padding: 16px 20px; font-size: 0.875rem; }
+      .content { padding: 32px 32px; }
+      header { padding: 0 32px; }
+      .tabs { padding: 0 32px; }
+      .tab { padding: 16px 22px; font-size: 0.9rem; }
       .col { min-width: 280px; }
     }
 
-    /* Small tablet / large mobile */
+    /* Small tablet / large mobile (≤ 768 px) */
     @media (max-width: 768px)
     {
+      body { font-size: 15px; }
       .content { padding: 24px 20px; }
       header { padding: 0 20px; }
       .tabs { padding: 0 12px; }
-      .tab { padding: 14px 16px; font-size: 0.85rem; }
+      .tab { padding: 14px 16px; font-size: 0.875rem; }
       .col { min-width: 100%; }
       .row { flex-direction: column; gap: 16px; }
       .result { max-height: 45vh; }
       .diff-out { max-height: 50vh; }
     }
 
-    /* Mobile */
+    /* Mobile (≤ 480 px) */
     @media (max-width: 480px)
     {
-      body { font-size: 14px; }
-      header { padding: 0 14px; height: 52px; }
-      header h1 { font-size: 1rem; }
+      body { font-size: 15px; }
+      header { padding: 0 16px; height: 54px; }
+      header h1 { font-size: 1.1rem; }
       .tabs { padding: 0 8px; }
-      .tab { padding: 12px 12px; font-size: 0.82rem; }
-      .content { padding: 16px 14px; }
-      h2 { font-size: 1rem; }
-      .subtitle { font-size: 0.85rem; }
-      input[type="text"], input[type="number"], textarea, select { padding: 9px 12px; font-size: 0.9rem; }
-      .btn { padding: 9px 16px; font-size: 0.88rem; }
-      .input-zone textarea { min-height: 140px; padding-top: 38px; }
-      .result { max-height: 38vh; font-size: 0.82rem; padding: 12px 40px 12px 12px; }
-      .copy-btn { padding: 3px 10px; font-size: 0.74rem; top: 8px; right: 8px; }
-      .diff-line { font-size: 0.78rem; padding: 1px 10px; }
-      .epoch-table th, .epoch-table td { padding: 8px 12px; font-size: 0.88rem; }
+      .tab { padding: 13px 14px; font-size: 0.875rem; }
+      .content { padding: 20px 16px; }
+      h2 { font-size: 1.15rem; }
+      .subtitle { font-size: 0.9375rem; }
+      input[type="text"], input[type="number"], textarea, select { padding: 10px 13px; font-size: 0.9375rem; }
+      .btn { padding: 10px 18px; font-size: 0.9rem; }
+      .input-zone textarea { min-height: 140px; padding-top: 40px; }
+      .result { max-height: 38vh; font-size: 0.875rem; padding: 12px 40px 12px 12px; }
+      .copy-btn { padding: 3px 10px; font-size: 0.8rem; top: 8px; right: 8px; }
+      .diff-line { font-size: 0.8rem; padding: 1px 10px; }
+      .epoch-table th, .epoch-table td { padding: 10px 12px; font-size: 0.9rem; }
     }
   </style>
   <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
