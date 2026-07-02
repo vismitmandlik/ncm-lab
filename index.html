@@ -136,8 +136,7 @@
       align-items: center;
       gap: 12px;
     }
-    header h1 { font-size: 1rem; font-weight: 700; letter-spacing: -0.02em; }
-    header h1 .brand-sep { color: var(--color-border-default); font-weight: 300; margin: 0 2px; }
+    header h1 { font-size: 1.15rem; font-weight: 700; letter-spacing: -0.02em; }
     header h1 span { color: var(--color-accent); font-weight: 600; letter-spacing: -0.01em; }
 
     /* ── Tabs ── */
@@ -155,8 +154,8 @@
     .tabs::-webkit-scrollbar { display: none; }
     .tab
     {
-      padding: 16px 24px;
-      font-size: 0.9rem;
+      padding: 16px 26px;
+      font-size: 0.95rem;
       font-weight: 600;
       color: var(--color-fg-muted);
       cursor: pointer;
@@ -175,15 +174,15 @@
       background: var(--color-accent-subtle);
     }
     /* ── Content ── */
-    .content { padding: 28px 48px 40px; width: 100%; max-width: 1320px; margin: 0 auto; flex: 1; box-sizing: border-box; }
+    .content { padding: 28px 48px 40px; width: 100%; max-width: 1600px; margin: 0 auto; flex: 1; box-sizing: border-box; }
     .panel { display: none; }
     .panel.active { display: block; }
 
-    h2 { font-size: 1.5rem; font-weight: 800; margin-bottom: 5px; letter-spacing: -0.04em; color: var(--color-fg-default); }
+    h2 { font-size: 1.65rem; font-weight: 800; margin-bottom: 5px; letter-spacing: -0.04em; color: var(--color-fg-default); }
     .subtitle { color: var(--color-fg-muted); font-size: 0.9rem; margin-bottom: 22px; line-height: 1.6; font-weight: 400; }
 
     /* ── Form ── */
-    label { display: block; margin-bottom: 6px; font-size: 0.72rem; font-weight: 700; color: var(--color-fg-muted); letter-spacing: 0.07em; text-transform: uppercase; }
+    label { display: block; margin-bottom: 6px; font-size: 0.78rem; font-weight: 700; color: var(--color-fg-muted); letter-spacing: 0.07em; text-transform: uppercase; }
     /* Override: upload-btn is a <label> but should not get uppercase form-label styles */
     label.upload-btn { font-size: 0.875rem; font-weight: 500; text-transform: none; letter-spacing: 0; margin-bottom: 0; }
     .field { margin-bottom: 18px; }
@@ -363,7 +362,7 @@
     }
     .output-panel-title
     {
-      font-size: 0.72rem;
+      font-size: 0.78rem;
       font-weight: 700;
       letter-spacing: 0.07em;
       text-transform: uppercase;
@@ -373,7 +372,7 @@
       gap: 8px;
     }
     /* Override badge margins when inside output panel header */
-    .output-panel-title .badge { margin: 0; font-size: 0.72rem; }
+    .output-panel-title .badge { margin: 0; font-size: 0.75rem; }
 
     /* Within the output panel, result box merges into the container */
     .output-panel .result-wrap { position: relative; }
@@ -817,19 +816,19 @@
 
     @media (prefers-color-scheme: light)
     {
-      .json-key   { color: #7030a0; }
-      .json-str   { color: #1a6640; }
-      .json-num   { color: #7a4c18; }
-      .json-bool  { color: #0c5a90; }
-      .json-null  { color: #5a5a7a; font-style: italic; }
-      .json-punct { color: #888898; }
+      .json-key   { color: #6f42c1; }
+      .json-str   { color: #116329; }
+      .json-num   { color: #953800; }
+      .json-bool  { color: #0550ae; }
+      .json-null  { color: #6e7781; font-style: italic; }
+      .json-punct { color: #57606a; }
     }
-    html.theme-light .json-key   { color: #7030a0; }
-    html.theme-light .json-str   { color: #1a6640; }
-    html.theme-light .json-num   { color: #7a4c18; }
-    html.theme-light .json-bool  { color: #0c5a90; }
-    html.theme-light .json-null  { color: #5a5a7a; font-style: italic; }
-    html.theme-light .json-punct { color: #888898; }
+    html.theme-light .json-key   { color: #6f42c1; }
+    html.theme-light .json-str   { color: #116329; }
+    html.theme-light .json-num   { color: #953800; }
+    html.theme-light .json-bool  { color: #0550ae; }
+    html.theme-light .json-null  { color: #6e7781; font-style: italic; }
+    html.theme-light .json-punct { color: #57606a; }
     html.theme-dark  .json-key   { color: #a78bdc; }
     html.theme-dark  .json-str   { color: #4ec994; }
     html.theme-dark  .json-num   { color: #d4a96a; }
@@ -855,14 +854,18 @@
     }
     .json-viewer tr:hover td
     {
-      background: rgba(255, 255, 255, .03);
+      background: rgba(255, 255, 255, .04);
+    }
+    html.theme-light .json-viewer tr:hover td
+    {
+      background: rgba(0, 0, 0, .05);
     }
     .json-ln
     {
       width: 1%;
       white-space: nowrap;
       text-align: right;
-      padding: 0 12px 0 16px;
+      padding: 0 14px 0 16px;
       color: var(--color-fg-subtle);
       border-right: 1px solid var(--color-border-default);
       user-select: none;
@@ -870,8 +873,13 @@
       font-size: 0.8em;
       vertical-align: top;
       line-height: inherit;
-      opacity: .5;
+      opacity: .55;
       min-width: 2ch;
+    }
+    html.theme-light .json-ln
+    {
+      opacity: 1;
+      color: #6e7781;
     }
     .json-line
     {
@@ -910,7 +918,7 @@
     {
       body { font-size: 17px; }
       .content { padding: 32px 72px 48px; }
-      .tab { padding: 18px 32px; }
+      .tab { padding: 18px 32px; font-size: 1rem; }
       header { padding: 0 72px; height: 64px; }
       .tabs { padding: 0 72px; }
     }
@@ -950,7 +958,7 @@
       .tabs { padding: 0 8px; }
       .tab { padding: 13px 14px; font-size: 0.875rem; }
       .content { padding: 18px 16px 28px; }
-      h2 { font-size: 1.25rem; }
+      h2 { font-size: 1.35rem; }
       .subtitle { font-size: 0.9rem; }
       input[type="text"], input[type="number"], textarea, select { padding: 10px 13px; font-size: 0.9375rem; }
       .btn { padding: 10px 18px; font-size: 0.9rem; }
@@ -968,7 +976,7 @@
 <!-- ─────────────────────────── Header ─────────────────────────────────────── -->
 <header>
   <i data-lucide="monitor"></i>
-  <h1>NCM<span class="brand-sep">/</span><span>Lab</span></h1>
+  <h1>NCM <span>Lab</span></h1>
   <div class="header-end">
     <button class="theme-toggle" id="btn-theme-toggle" title="Toggle theme" aria-label="Toggle theme">
       <i data-lucide="sun"  id="icon-sun"></i>
