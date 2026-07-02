@@ -130,13 +130,13 @@
     {
       background: var(--color-bg-raised);
       border-bottom: 1px solid var(--color-border-default);
-      padding: 0 48px;
-      height: 58px;
+      padding: 0 28px;
+      height: 62px;
       display: flex;
       align-items: center;
       gap: 12px;
     }
-    header h1 { font-size: 1.15rem; font-weight: 700; letter-spacing: -0.02em; }
+    header h1 { font-size: 1.35rem; font-weight: 700; letter-spacing: -0.02em; }
     header h1 span { color: var(--color-accent); font-weight: 600; letter-spacing: -0.01em; }
 
     /* ── Tabs ── */
@@ -145,7 +145,7 @@
       display: flex;
       background: var(--color-bg-raised);
       border-bottom: 1px solid var(--color-border-default);
-      padding: 0 48px;
+      padding: 0 28px;
       gap: 0;
       overflow-x: auto;
       -webkit-overflow-scrolling: touch;
@@ -154,8 +154,8 @@
     .tabs::-webkit-scrollbar { display: none; }
     .tab
     {
-      padding: 16px 26px;
-      font-size: 0.95rem;
+      padding: 17px 26px;
+      font-size: 1.05rem;
       font-weight: 600;
       color: var(--color-fg-muted);
       cursor: pointer;
@@ -174,15 +174,15 @@
       background: var(--color-accent-subtle);
     }
     /* ── Content ── */
-    .content { padding: 28px 48px 40px; width: 100%; max-width: 1600px; margin: 0 auto; flex: 1; box-sizing: border-box; }
+    .content { padding: 24px 28px 40px; width: 100%; max-width: 1800px; margin: 0 auto; flex: 1; box-sizing: border-box; }
     .panel { display: none; }
     .panel.active { display: block; }
 
-    h2 { font-size: 1.65rem; font-weight: 800; margin-bottom: 5px; letter-spacing: -0.04em; color: var(--color-fg-default); }
-    .subtitle { color: var(--color-fg-muted); font-size: 0.9rem; margin-bottom: 22px; line-height: 1.6; font-weight: 400; }
+    h2 { font-size: 2rem; font-weight: 800; margin-bottom: 5px; letter-spacing: -0.04em; color: var(--color-fg-default); }
+    .subtitle { color: var(--color-fg-muted); font-size: 0.95rem; margin-bottom: 22px; line-height: 1.6; font-weight: 400; }
 
     /* ── Form ── */
-    label { display: block; margin-bottom: 6px; font-size: 0.78rem; font-weight: 700; color: var(--color-fg-muted); letter-spacing: 0.07em; text-transform: uppercase; }
+    label { display: block; margin-bottom: 6px; font-size: 0.82rem; font-weight: 700; color: var(--color-fg-muted); letter-spacing: 0.07em; text-transform: uppercase; }
     /* Override: upload-btn is a <label> but should not get uppercase form-label styles */
     label.upload-btn { font-size: 0.875rem; font-weight: 500; text-transform: none; letter-spacing: 0; margin-bottom: 0; }
     .field { margin-bottom: 18px; }
@@ -249,7 +249,7 @@
     .input-zone { position: relative; }
     .input-zone textarea
     {
-      min-height: 160px;
+      min-height: 180px;
       padding-top: 42px;
       transition: border-color .15s, box-shadow .15s;
     }
@@ -362,7 +362,7 @@
     }
     .output-panel-title
     {
-      font-size: 0.78rem;
+      font-size: 0.82rem;
       font-weight: 700;
       letter-spacing: 0.07em;
       text-transform: uppercase;
@@ -380,7 +380,8 @@
     {
       border: none;
       border-radius: 0;
-      max-height: 60vh;
+      max-height: 65vh;
+      min-height: 120px;
     }
     .output-panel .result.ok  { border-top: 2px solid var(--color-success); }
     .output-panel .result.err { border-top: 2px solid var(--color-error); }
@@ -611,7 +612,7 @@
     #icon-moon { display: none;  }
 
     /* header lucide icon */
-    header > i[data-lucide] { width: 20px; height: 20px; stroke: var(--color-accent); flex-shrink: 0; }
+    header > i[data-lucide] { width: 22px; height: 22px; stroke: var(--color-accent); flex-shrink: 0; }
 
     /* ── Changelog ──────────────────────────────────────────────────────── */
     .changelog-lead
@@ -917,10 +918,11 @@
     @media (min-width: 1600px)
     {
       body { font-size: 17px; }
-      .content { padding: 32px 72px 48px; }
-      .tab { padding: 18px 32px; font-size: 1rem; }
-      header { padding: 0 72px; height: 64px; }
-      .tabs { padding: 0 72px; }
+      .content { padding: 28px 40px 48px; }
+      .tab { padding: 18px 30px; font-size: 1.1rem; }
+      header { padding: 0 40px; height: 66px; }
+      header h1 { font-size: 1.45rem; }
+      .tabs { padding: 0 40px; }
     }
 
     /* Standard desktop (1025 – 1599 px): already covered by defaults */
@@ -928,10 +930,10 @@
     /* Tablet (≤ 1024 px) */
     @media (max-width: 1024px)
     {
-      .content { padding: 24px 28px 36px; }
-      header { padding: 0 28px; }
-      .tabs { padding: 0 28px; }
-      .tab { padding: 15px 20px; font-size: 0.875rem; }
+      .content { padding: 20px 20px 32px; }
+      header { padding: 0 20px; }
+      .tabs { padding: 0 20px; }
+      .tab { padding: 15px 18px; font-size: 0.95rem; }
       .col { min-width: 280px; }
     }
 
@@ -939,10 +941,10 @@
     @media (max-width: 768px)
     {
       body { font-size: 15px; }
-      .content { padding: 24px 20px; }
-      header { padding: 0 20px; }
+      .content { padding: 18px 16px; }
+      header { padding: 0 16px; }
       .tabs { padding: 0 12px; }
-      .tab { padding: 14px 16px; font-size: 0.875rem; }
+      .tab { padding: 13px 14px; font-size: 0.9rem; }
       .col { min-width: 100%; }
       .row { flex-direction: column; gap: 16px; }
       .result { max-height: 45vh; }
