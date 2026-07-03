@@ -706,6 +706,7 @@
       border-bottom: 1px solid var(--color-border-muted);
     }
     .entry:last-child { border-bottom: none; }
+    .entry--plain { grid-template-columns: 1fr; }
 
     .entry-tag-col { padding-top: 2px; }
 
@@ -1137,12 +1138,7 @@
   <div class="panel" id="panel-changelog">
     <h2>Changelog</h2>
     <p class="changelog-lead">
-      All notable changes to NCM Lab are documented here, newest first.
-      Entries are grouped by release and tagged as
-      <span class="entry-tag entry-tag-new">New</span>,
-      <span class="entry-tag entry-tag-improved">Improved</span>,
-      <span class="entry-tag entry-tag-fix">Fix</span>, or
-      <span class="entry-tag entry-tag-security">Security</span>.
+      Track new features, improvements, fixes, and security updates across NCM Lab releases.
     </p>
 
     <!-- ── v1.0 ── -->
@@ -1153,28 +1149,21 @@
         <span class="release-label">Initial release</span>
       </header>
       <p class="release-tagline">
-        First public version of NCM Lab. Covers the three most common NCM
-        backend debugging workflows — decoding encoded field values, converting
-        epoch timestamps, and diffing JSON / XML payloads — with full
-        light &amp; dark theme support.
+        NCM Lab launches with three purpose-built tools for network configuration management debugging workflows.
       </p>
 
-      <!-- Core tools -->
+      <!-- Features -->
       <section class="release-group">
-        <h3 class="release-group-title">Core tools</h3>
+        <h3 class="release-group-title">Features</h3>
         <ul class="entry-list">
 
           <li class="entry">
             <div class="entry-tag-col"><span class="entry-tag entry-tag-new">New</span></div>
             <div class="entry-content">
-              <p class="entry-headline">Decode Field — auto-detects Snappy and AES-ECB</p>
+              <p class="entry-headline">Decode Field</p>
               <p class="entry-detail">
-                Paste or drop any Base64 / Base64URL encoded backend field and the tool automatically
-                determines whether it is Snappy-compressed (used by <code>CodecUtil.compress()</code>
-                for API response fields such as <code>config.backup.file.content</code>) or AES-ECB
-                encrypted (used for raw DB-level sensitive fields).
-                After decoding, a coloured badge — <em>Snappy</em> or <em>AES-ECB</em> — appears next
-                to the Output label so the decode path is always explicit.
+                Decode encoded values commonly found in configuration backups and API responses.
+                Supported formats are detected automatically, and the output type is clearly labelled after decoding.
               </p>
             </div>
           </li>
@@ -1182,12 +1171,10 @@
           <li class="entry">
             <div class="entry-tag-col"><span class="entry-tag entry-tag-new">New</span></div>
             <div class="entry-content">
-              <p class="entry-headline">Epoch Converter — multi-timezone timestamp tool</p>
+              <p class="entry-headline">Epoch Converter</p>
               <p class="entry-detail">
-                Converts any epoch value (milliseconds or seconds, auto-detected by digit count)
-                to human-readable timestamps across ten timezones including the browser's local zone.
-                Reverse conversion from ISO 8601 or RFC 2822 strings back to epoch ms / s is also
-                supported; both directions submit on Enter so the mouse is never needed.
+                Convert any epoch value to a readable timestamp across multiple timezones, or reverse a date string back to epoch.
+                Seconds and milliseconds are detected automatically. Both directions submit with the keyboard.
               </p>
             </div>
           </li>
@@ -1195,13 +1182,86 @@
           <li class="entry">
             <div class="entry-tag-col"><span class="entry-tag entry-tag-new">New</span></div>
             <div class="entry-content">
-              <p class="entry-headline">JSON / XML Prettifier &amp; Diff</p>
+              <p class="entry-headline">JSON / XML Formatter and Diff</p>
               <p class="entry-detail">
-                Prettify or minify JSON and XML payloads in two independent panels with
-                per-panel Copy, Clear, Prettify, and Minify actions.
-                The Diff section computes a line-level LCS diff and renders it with collapsed
-                context — only changed lines and three surrounding lines are shown, keeping
-                large diffs readable without endless scrolling.
+                Format and inspect JSON or XML in two independent panels, each with copy, clear, and format controls.
+                The diff view highlights only what changed and collapses unchanged content, keeping large comparisons easy to review.
+              </p>
+            </div>
+          </li>
+
+        </ul>
+      </section>
+
+      <!-- User experience -->
+      <section class="release-group">
+        <h3 class="release-group-title">User experience</h3>
+        <ul class="entry-list">
+
+          <li class="entry">
+            <div class="entry-tag-col"><span class="entry-tag entry-tag-new">New</span></div>
+            <div class="entry-content">
+              <p class="entry-headline">Paste or drop a file directly onto the decode input</p>
+              <p class="entry-detail">
+                The decode input accepts pasted text and file drops. Files can also be loaded using the upload button in the top-right corner of the input.
+                Typing or pasting while a file is loaded replaces the file content automatically — no manual reset required.
+              </p>
+            </div>
+          </li>
+
+          <li class="entry">
+            <div class="entry-tag-col"><span class="entry-tag entry-tag-new">New</span></div>
+            <div class="entry-content">
+              <p class="entry-headline">Results appear inline and scroll into view automatically</p>
+              <p class="entry-detail">
+                Decoded output appears directly below the input without navigating away.
+                The result scrolls into view after decoding so the output is immediately visible regardless of page length.
+              </p>
+            </div>
+          </li>
+
+          <li class="entry">
+            <div class="entry-tag-col"><span class="entry-tag entry-tag-new">New</span></div>
+            <div class="entry-content">
+              <p class="entry-headline">Keyboard shortcuts</p>
+              <p class="entry-detail">
+                <kbd>Ctrl</kbd>+<kbd>Enter</kbd> submits the decode input.
+                <kbd>Enter</kbd> submits epoch converter fields.
+                No mouse interaction is required for common workflows.
+              </p>
+            </div>
+          </li>
+
+          <li class="entry">
+            <div class="entry-tag-col"><span class="entry-tag entry-tag-new">New</span></div>
+            <div class="entry-content">
+              <p class="entry-headline">Contextual feedback throughout</p>
+              <p class="entry-detail">
+                The decode button shows a loading indicator while processing.
+                The copy button appears only when output is ready to copy.
+                Empty result panels are hidden until populated.
+              </p>
+            </div>
+          </li>
+
+          <li class="entry">
+            <div class="entry-tag-col"><span class="entry-tag entry-tag-new">New</span></div>
+            <div class="entry-content">
+              <p class="entry-headline">Non-blocking error notifications</p>
+              <p class="entry-detail">
+                Errors appear as brief slide-up notifications that dismiss automatically after a few seconds.
+                They do not block the page or require a click to dismiss.
+              </p>
+            </div>
+          </li>
+
+          <li class="entry">
+            <div class="entry-tag-col"><span class="entry-tag entry-tag-new">New</span></div>
+            <div class="entry-content">
+              <p class="entry-headline">Light and dark theme</p>
+              <p class="entry-detail">
+                Switch between light and dark mode using the toggle in the header.
+                The app follows the system preference by default. A manually selected theme is remembered on reload.
               </p>
             </div>
           </li>
@@ -1217,12 +1277,10 @@
           <li class="entry">
             <div class="entry-tag-col"><span class="entry-tag entry-tag-security">Security</span></div>
             <div class="entry-content">
-              <p class="entry-headline">AES-ECB cipher key never exposed in the browser</p>
+              <p class="entry-headline">Cipher key stored server-side only</p>
               <p class="entry-detail">
-                The cipher key is stored exclusively as a Vercel environment variable and evaluated
-                server-side inside a serverless function at <code>/api/decode</code>.
-                It never appears in HTML source, JavaScript bundles, or any network request payload
-                visible to browser devtools, making it safe to use from client sites.
+                The key used to decrypt AES-ECB values is stored on the server and never sent to the browser.
+                It does not appear in the page source, JavaScript, or any network request visible in developer tools.
               </p>
             </div>
           </li>
@@ -1230,171 +1288,29 @@
         </ul>
       </section>
 
-      <!-- User experience -->
+      <!-- Included in v1.0 -->
       <section class="release-group">
-        <h3 class="release-group-title">User experience</h3>
+        <h3 class="release-group-title">Included in v1.0</h3>
         <ul class="entry-list">
 
-          <li class="entry">
-            <div class="entry-tag-col"><span class="entry-tag entry-tag-improved">Improved</span></div>
+          <li class="entry entry--plain">
             <div class="entry-content">
-              <p class="entry-headline">Paste-first decode input with compact file upload</p>
-              <p class="entry-detail">
-                The decode textarea is the full-width primary surface — large, drag-and-drop aware,
-                and focused on paste. File upload is a compact ghost button in the top-right corner
-                that loads file content directly into the textarea.
-                Typing or pasting into the textarea while a file is loaded automatically detaches
-                the file so switching between modes requires no manual step.
-              </p>
+              <p class="entry-headline">Decode Field</p>
+              <p class="entry-detail">Snappy decompression · AES-ECB decryption · Base64 and Base64URL input · drag-and-drop file upload</p>
             </div>
           </li>
 
-          <li class="entry">
-            <div class="entry-tag-col"><span class="entry-tag entry-tag-improved">Improved</span></div>
+          <li class="entry entry--plain">
             <div class="entry-content">
-              <p class="entry-headline">Auto-scroll to output after decode</p>
-              <p class="entry-detail">
-                Clicking Decode scrolls the output label smoothly to the top of the viewport
-                once the result arrives, so the decoded content is immediately visible regardless
-                of how tall the input or page is.
-                This applies to both successful decodes and error responses.
-              </p>
+              <p class="entry-headline">Epoch Converter</p>
+              <p class="entry-detail">Epoch to timestamp · Timestamp to epoch · Seconds and milliseconds · 10 timezones including local</p>
             </div>
           </li>
 
-          <li class="entry">
-            <div class="entry-tag-col"><span class="entry-tag entry-tag-improved">Improved</span></div>
+          <li class="entry entry--plain">
             <div class="entry-content">
-              <p class="entry-headline">Toast error notifications replace browser alerts</p>
-              <p class="entry-detail">
-                JSON/XML parse errors and API failures now surface as slide-up toasts anchored to
-                the bottom-right corner, replacing the browser's native <code>alert()</code> dialog
-                that blocks the entire tab and requires a mouse click to dismiss.
-                Toasts auto-dismiss after 3.5 seconds and do not interrupt the current workflow.
-              </p>
-            </div>
-          </li>
-
-          <li class="entry">
-            <div class="entry-tag-col"><span class="entry-tag entry-tag-improved">Improved</span></div>
-            <div class="entry-content">
-              <p class="entry-headline">Keyboard shortcuts for power users</p>
-              <p class="entry-detail">
-                <kbd>Ctrl</kbd>+<kbd>Enter</kbd> submits the decode textarea.
-                <kbd>Enter</kbd> submits both epoch converter inputs.
-                The JSON/XML mode selector is a segmented control that is visually distinct from
-                action buttons, making the current mode state unambiguous at a glance.
-              </p>
-            </div>
-          </li>
-
-          <li class="entry">
-            <div class="entry-tag-col"><span class="entry-tag entry-tag-improved">Improved</span></div>
-            <div class="entry-content">
-              <p class="entry-headline">Contextual UI feedback throughout</p>
-              <p class="entry-detail">
-                The Decode button shows a spinner during the API request.
-                The Copy button is hidden until a successful result exists.
-                "Clear Diff" is disabled until a diff is rendered.
-                Empty output boxes are hidden until populated, removing the hollow bordered
-                rectangles that appeared on load.
-              </p>
-            </div>
-          </li>
-
-        </ul>
-      </section>
-
-      <!-- Accessibility -->
-      <section class="release-group">
-        <h3 class="release-group-title">Accessibility &amp; typography</h3>
-        <ul class="entry-list">
-
-          <li class="entry">
-            <div class="entry-tag-col"><span class="entry-tag entry-tag-improved">Improved</span></div>
-            <div class="entry-content">
-              <p class="entry-headline">WCAG AA typography — 14 px floor on dark backgrounds</p>
-              <p class="entry-detail">
-                All text elements meet the WCAG AA 4.5:1 contrast minimum.
-                Secondary and hint text has been raised to a 14 px floor — hint text was previously
-                13.1 px and file chip labels 12.5 px — removing the eye strain caused by the
-                combination of small size and muted colour on near-black surfaces.
-              </p>
-            </div>
-          </li>
-
-          <li class="entry">
-            <div class="entry-tag-col"><span class="entry-tag entry-tag-improved">Improved</span></div>
-            <div class="entry-content">
-              <p class="entry-headline">Fully responsive layout — four breakpoints</p>
-              <p class="entry-detail">
-                The layout uses full viewport width with generous padding and collapses to a
-                single-column layout at 768 px. Tab overflow scrolls horizontally on narrow screens
-                without wrapping. Breakpoints target 1600 px (large desktop), 1024 px (laptop),
-                768 px (tablet), and 480 px (mobile).
-              </p>
-            </div>
-          </li>
-
-          <li class="entry">
-            <div class="entry-tag-col"><span class="entry-tag entry-tag-fix">Fix</span></div>
-            <div class="entry-content">
-              <p class="entry-headline">Long decoded lines scroll horizontally instead of wrapping</p>
-              <p class="entry-detail">
-                Previously, long string values in decoded JSON wrapped to column 0, making
-                continuation text appear before the indentation of the line above.
-                The result box now uses <code>white-space: pre</code> so long lines scroll
-                horizontally, preserving indentation structure exactly as it appears in the data.
-              </p>
-            </div>
-          </li>
-
-          <li class="entry">
-            <div class="entry-tag-col"><span class="entry-tag entry-tag-improved">Improved</span></div>
-            <div class="entry-content">
-              <p class="entry-headline">Custom dark-themed scrollbar across all scrollable areas</p>
-              <p class="entry-detail">
-                The browser's default white OS scrollbar has been replaced with a styled scrollbar
-                matching the dark theme — dark track, subtle thumb, accent colour on hover —
-                applied consistently to the result box, diff viewer, textareas, and tab bar.
-                The scrollbar updates automatically when switching to light mode.
-              </p>
-            </div>
-          </li>
-
-        </ul>
-      </section>
-
-      <!-- Theming -->
-      <section class="release-group">
-        <h3 class="release-group-title">Theming</h3>
-        <ul class="entry-list">
-
-          <li class="entry">
-            <div class="entry-tag-col"><span class="entry-tag entry-tag-new">New</span></div>
-            <div class="entry-content">
-              <p class="entry-headline">Light and dark mode with system preference sync</p>
-              <p class="entry-detail">
-                A toggle button in the header switches between light and dark themes.
-                The app follows the browser's <code>prefers-color-scheme</code> preference by
-                default; a manually chosen theme is persisted to <code>localStorage</code>
-                and restored with no colour flash on reload via an inline anti-FOUC script
-                in <code>&lt;head&gt;</code>.
-              </p>
-            </div>
-          </li>
-
-          <li class="entry">
-            <div class="entry-tag-col"><span class="entry-tag entry-tag-new">New</span></div>
-            <div class="entry-content">
-              <p class="entry-headline">Semantic CSS custom property token system</p>
-              <p class="entry-detail">
-                All colours are expressed as <code>--color-bg-*</code>, <code>--color-fg-*</code>,
-                <code>--color-accent-*</code>, <code>--color-success/error/warn-*</code> tokens
-                with WCAG AA contrast ratios verified and documented inline.
-                New themes can be added with a single <code>html.theme-NAME&nbsp;{&nbsp;}</code>
-                CSS block — no other refactoring required.
-              </p>
+              <p class="entry-headline">JSON / XML Formatter</p>
+              <p class="entry-detail">Format and minify · Two independent panels · Side-by-side diff with collapsed context</p>
             </div>
           </li>
 
@@ -1418,23 +1334,22 @@
   &lt;p class="release-tagline"&gt;One sentence summary of this release.&lt;/p&gt;
 
   &lt;section class="release-group"&gt;
-    &lt;h3 class="release-group-title"&gt;Category name&lt;/h3&gt;
+    &lt;h3 class="release-group-title"&gt;Section name&lt;/h3&gt;
     &lt;ul class="entry-list"&gt;
 
       &lt;li class="entry"&gt;
         &lt;div class="entry-tag-col"&gt;
-          &lt;!-- Pick one tag: --&gt;
+          &lt;!-- Pick one: --&gt;
           &lt;span class="entry-tag entry-tag-new"&gt;New&lt;/span&gt;
           &lt;span class="entry-tag entry-tag-improved"&gt;Improved&lt;/span&gt;
           &lt;span class="entry-tag entry-tag-fix"&gt;Fix&lt;/span&gt;
           &lt;span class="entry-tag entry-tag-security"&gt;Security&lt;/span&gt;
         &lt;/div&gt;
         &lt;div class="entry-content"&gt;
-          &lt;p class="entry-headline"&gt;Short action phrase — what changed&lt;/p&gt;
+          &lt;p class="entry-headline"&gt;Short headline — what changed&lt;/p&gt;
           &lt;p class="entry-detail"&gt;
-            Sentence 1: what changed and where.
-            Sentence 2: why it matters or what problem it solves.
-            Sentence 3 (optional): any behaviour the user needs to know.
+            What changed and where. Why it matters or what problem it solves.
+            Any behaviour the user needs to know (optional).
           &lt;/p&gt;
         &lt;/div&gt;
       &lt;/li&gt;
@@ -1443,13 +1358,11 @@
   &lt;/section&gt;
 &lt;/article&gt;</pre>
         <p class="format-guide-note">
-          <strong>Tag guide:</strong>
-          <code>entry-tag-new</code> — brand-new feature or capability &nbsp;·&nbsp;
-          <code>entry-tag-improved</code> — enhancement to existing behaviour &nbsp;·&nbsp;
-          <code>entry-tag-fix</code> — bug or regression corrected &nbsp;·&nbsp;
-          <code>entry-tag-security</code> — security-relevant change.<br><br>
-          Keep headlines under 10 words and in sentence case. Each detail block should be
-          2–3 sentences maximum — link to a PR or issue number if more context is needed.
+          <strong>New</strong> — brand-new feature &nbsp;·&nbsp;
+          <strong>Improved</strong> — enhancement to existing behaviour &nbsp;·&nbsp;
+          <strong>Fix</strong> — bug or regression corrected &nbsp;·&nbsp;
+          <strong>Security</strong> — security-relevant change.<br><br>
+          Keep headlines concise and in sentence case. Two to three sentences per entry is enough.
         </p>
       </div>
     </aside>
