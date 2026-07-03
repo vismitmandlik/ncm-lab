@@ -1138,10 +1138,11 @@
   <div class="panel" id="panel-changelog">
     <h2>Changelog</h2>
     <p class="changelog-lead">
-      Track new features, improvements, fixes, and security updates across NCM Lab releases.
+      New features, improvements, fixes, and security updates — newest first.
     </p>
 
     <!-- ── v1.0 ── -->
+    <!-- To add a new release: copy this <article> block, update the version/date, and paste it above this one. -->
     <article class="release">
       <header class="release-header">
         <span class="release-version">v1.0</span>
@@ -1149,7 +1150,7 @@
         <span class="release-label">Initial release</span>
       </header>
       <p class="release-tagline">
-        NCM Lab launches with three purpose-built tools for network configuration management debugging workflows.
+        The first public release of NCM Lab — essential utilities for decoding, timestamp conversion, and structured data analysis.
       </p>
 
       <!-- Features -->
@@ -1162,8 +1163,8 @@
             <div class="entry-content">
               <p class="entry-headline">Decode Field</p>
               <p class="entry-detail">
-                Decode encoded values commonly found in configuration backups and API responses.
-                Supported formats are detected automatically, and the output type is clearly labelled after decoding.
+                Decode encoded values from configuration backups and API responses.
+                The encoding format is identified automatically and clearly shown with the result.
               </p>
             </div>
           </li>
@@ -1173,8 +1174,8 @@
             <div class="entry-content">
               <p class="entry-headline">Epoch Converter</p>
               <p class="entry-detail">
-                Convert any epoch value to a readable timestamp across multiple timezones, or reverse a date string back to epoch.
-                Seconds and milliseconds are detected automatically. Both directions submit with the keyboard.
+                Convert epoch values to readable timestamps across multiple timezones, or convert a date back to epoch.
+                Works in both directions with keyboard-only submission.
               </p>
             </div>
           </li>
@@ -1184,8 +1185,8 @@
             <div class="entry-content">
               <p class="entry-headline">JSON / XML Formatter and Diff</p>
               <p class="entry-detail">
-                Format and inspect JSON or XML in two independent panels, each with copy, clear, and format controls.
-                The diff view highlights only what changed and collapses unchanged content, keeping large comparisons easy to review.
+                Format and inspect JSON or XML in two independent panels.
+                The diff view focuses on what changed and collapses the rest, making large comparisons easy to read.
               </p>
             </div>
           </li>
@@ -1201,10 +1202,9 @@
           <li class="entry">
             <div class="entry-tag-col"><span class="entry-tag entry-tag-new">New</span></div>
             <div class="entry-content">
-              <p class="entry-headline">Paste or drop a file directly onto the decode input</p>
+              <p class="entry-headline">Flexible input options</p>
               <p class="entry-detail">
-                The decode input accepts pasted text and file drops. Files can also be loaded using the upload button in the top-right corner of the input.
-                Typing or pasting while a file is loaded replaces the file content automatically — no manual reset required.
+                Paste text, upload a file, or drag and drop content directly into supported tools.
               </p>
             </div>
           </li>
@@ -1212,10 +1212,9 @@
           <li class="entry">
             <div class="entry-tag-col"><span class="entry-tag entry-tag-new">New</span></div>
             <div class="entry-content">
-              <p class="entry-headline">Results appear inline and scroll into view automatically</p>
+              <p class="entry-headline">Keyboard-friendly workflows</p>
               <p class="entry-detail">
-                Decoded output appears directly below the input without navigating away.
-                The result scrolls into view after decoding so the output is immediately visible regardless of page length.
+                Common actions submit with the keyboard. No mouse interaction is required for most workflows.
               </p>
             </div>
           </li>
@@ -1223,11 +1222,9 @@
           <li class="entry">
             <div class="entry-tag-col"><span class="entry-tag entry-tag-new">New</span></div>
             <div class="entry-content">
-              <p class="entry-headline">Keyboard shortcuts</p>
+              <p class="entry-headline">Clear feedback and notifications</p>
               <p class="entry-detail">
-                <kbd>Ctrl</kbd>+<kbd>Enter</kbd> submits the decode input.
-                <kbd>Enter</kbd> submits epoch converter fields.
-                No mouse interaction is required for common workflows.
+                Loading states, results, and errors are presented clearly and do not interrupt the current workflow.
               </p>
             </div>
           </li>
@@ -1235,33 +1232,9 @@
           <li class="entry">
             <div class="entry-tag-col"><span class="entry-tag entry-tag-new">New</span></div>
             <div class="entry-content">
-              <p class="entry-headline">Contextual feedback throughout</p>
+              <p class="entry-headline">Light and dark themes</p>
               <p class="entry-detail">
-                The decode button shows a loading indicator while processing.
-                The copy button appears only when output is ready to copy.
-                Empty result panels are hidden until populated.
-              </p>
-            </div>
-          </li>
-
-          <li class="entry">
-            <div class="entry-tag-col"><span class="entry-tag entry-tag-new">New</span></div>
-            <div class="entry-content">
-              <p class="entry-headline">Non-blocking error notifications</p>
-              <p class="entry-detail">
-                Errors appear as brief slide-up notifications that dismiss automatically after a few seconds.
-                They do not block the page or require a click to dismiss.
-              </p>
-            </div>
-          </li>
-
-          <li class="entry">
-            <div class="entry-tag-col"><span class="entry-tag entry-tag-new">New</span></div>
-            <div class="entry-content">
-              <p class="entry-headline">Light and dark theme</p>
-              <p class="entry-detail">
-                Switch between light and dark mode using the toggle in the header.
-                The app follows the system preference by default. A manually selected theme is remembered on reload.
+                Choose the theme that fits your environment. The preference follows the system default and is remembered across sessions.
               </p>
             </div>
           </li>
@@ -1277,10 +1250,9 @@
           <li class="entry">
             <div class="entry-tag-col"><span class="entry-tag entry-tag-security">Security</span></div>
             <div class="entry-content">
-              <p class="entry-headline">Cipher key stored server-side only</p>
+              <p class="entry-headline">Secure decoding</p>
               <p class="entry-detail">
-                The key used to decrypt AES-ECB values is stored on the server and never sent to the browser.
-                It does not appear in the page source, JavaScript, or any network request visible in developer tools.
+                Sensitive decoding operations are handled server-side. Encryption keys are never exposed to the browser.
               </p>
             </div>
           </li>
@@ -1296,21 +1268,21 @@
           <li class="entry entry--plain">
             <div class="entry-content">
               <p class="entry-headline">Decode Field</p>
-              <p class="entry-detail">Snappy decompression · AES-ECB decryption · Base64 and Base64URL input · drag-and-drop file upload</p>
+              <p class="entry-detail">Encoded field decoding · Automatic format detection · File upload support</p>
             </div>
           </li>
 
           <li class="entry entry--plain">
             <div class="entry-content">
               <p class="entry-headline">Epoch Converter</p>
-              <p class="entry-detail">Epoch to timestamp · Timestamp to epoch · Seconds and milliseconds · 10 timezones including local</p>
+              <p class="entry-detail">Epoch to timestamp · Timestamp to epoch · Multi-timezone support</p>
             </div>
           </li>
 
           <li class="entry entry--plain">
             <div class="entry-content">
               <p class="entry-headline">JSON / XML Formatter</p>
-              <p class="entry-detail">Format and minify · Two independent panels · Side-by-side diff with collapsed context</p>
+              <p class="entry-detail">Format and minify · Dual-panel editor · Visual diff comparison</p>
             </div>
           </li>
 
@@ -1319,53 +1291,6 @@
 
     </article>
     <!-- /v1.0 -->
-
-    <!-- ── Format guide for future entries ── -->
-    <aside class="format-guide" aria-label="How to add future changelog entries">
-      <h3 class="format-guide-title">Adding future entries</h3>
-      <div class="format-guide-body">
-        <pre>
-&lt;!-- New release — add ABOVE the previous &lt;article class="release"&gt; --&gt;
-&lt;article class="release"&gt;
-  &lt;header class="release-header"&gt;
-    &lt;span class="release-version"&gt;v1.1&lt;/span&gt;
-    &lt;time class="release-date" datetime="YYYY-MM-DD"&gt;Month YYYY&lt;/time&gt;
-  &lt;/header&gt;
-  &lt;p class="release-tagline"&gt;One sentence summary of this release.&lt;/p&gt;
-
-  &lt;section class="release-group"&gt;
-    &lt;h3 class="release-group-title"&gt;Section name&lt;/h3&gt;
-    &lt;ul class="entry-list"&gt;
-
-      &lt;li class="entry"&gt;
-        &lt;div class="entry-tag-col"&gt;
-          &lt;!-- Pick one: --&gt;
-          &lt;span class="entry-tag entry-tag-new"&gt;New&lt;/span&gt;
-          &lt;span class="entry-tag entry-tag-improved"&gt;Improved&lt;/span&gt;
-          &lt;span class="entry-tag entry-tag-fix"&gt;Fix&lt;/span&gt;
-          &lt;span class="entry-tag entry-tag-security"&gt;Security&lt;/span&gt;
-        &lt;/div&gt;
-        &lt;div class="entry-content"&gt;
-          &lt;p class="entry-headline"&gt;Short headline — what changed&lt;/p&gt;
-          &lt;p class="entry-detail"&gt;
-            What changed and where. Why it matters or what problem it solves.
-            Any behaviour the user needs to know (optional).
-          &lt;/p&gt;
-        &lt;/div&gt;
-      &lt;/li&gt;
-
-    &lt;/ul&gt;
-  &lt;/section&gt;
-&lt;/article&gt;</pre>
-        <p class="format-guide-note">
-          <strong>New</strong> — brand-new feature &nbsp;·&nbsp;
-          <strong>Improved</strong> — enhancement to existing behaviour &nbsp;·&nbsp;
-          <strong>Fix</strong> — bug or regression corrected &nbsp;·&nbsp;
-          <strong>Security</strong> — security-relevant change.<br><br>
-          Keep headlines concise and in sentence case. Two to three sentences per entry is enough.
-        </p>
-      </div>
-    </aside>
 
   </div><!-- /panel-changelog -->
 
