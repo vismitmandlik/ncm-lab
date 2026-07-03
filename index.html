@@ -155,7 +155,7 @@
     .tab
     {
       padding: 17px 26px;
-      font-size: 1.15rem;
+      font-size: 1.2rem;
       font-weight: 700;
       color: var(--color-fg-muted);
       cursor: pointer;
@@ -178,11 +178,11 @@
     .panel { display: none; }
     .panel.active { display: block; }
 
-    h2 { font-size: 2.25rem; font-weight: 800; margin-bottom: 5px; letter-spacing: -0.04em; color: var(--color-fg-default); }
-    .subtitle { color: var(--color-fg-default); font-size: 1rem; margin-bottom: 22px; line-height: 1.6; font-weight: 400; opacity: .7; }
+    h2 { font-size: 2.5rem; font-weight: 800; margin-bottom: 5px; letter-spacing: -0.05em; color: var(--color-fg-default); }
+    .subtitle { color: var(--color-fg-muted); font-size: 1.05rem; margin-bottom: 22px; line-height: 1.6; font-weight: 400; }
 
     /* ── Form ── */
-    label { display: block; margin-bottom: 6px; font-size: 0.875rem; font-weight: 700; color: var(--color-fg-default); letter-spacing: 0.06em; text-transform: uppercase; opacity: .65; }
+    label { display: block; margin-bottom: 6px; font-size: 0.875rem; font-weight: 700; color: var(--color-fg-muted); letter-spacing: 0.06em; text-transform: uppercase; }
     /* Override: upload-btn is a <label> but should not get uppercase form-label styles */
     label.upload-btn { font-size: 0.875rem; font-weight: 500; text-transform: none; letter-spacing: 0; margin-bottom: 0; }
     .field { margin-bottom: 18px; }
@@ -357,22 +357,22 @@
       justify-content: space-between;
       padding: 9px 14px;
       background: var(--color-bg-emphasis);
-      border-bottom: 1px solid var(--color-border-default);
+      border-bottom: 2px solid var(--color-border-default);
       min-height: 40px;
     }
     .output-panel-title
     {
-      font-size: 0.875rem;
-      font-weight: 700;
-      letter-spacing: 0.07em;
+      font-size: 0.9rem;
+      font-weight: 800;
+      letter-spacing: 0.08em;
       text-transform: uppercase;
-      color: var(--color-fg-muted);
+      color: var(--color-fg-default);
       display: flex;
       align-items: center;
-      gap: 8px;
+      gap: 10px;
     }
     /* Override badge margins when inside output panel header */
-    .output-panel-title .badge { margin: 0; font-size: 0.75rem; }
+    .output-panel-title .badge { margin: 0; font-size: 0.78rem; font-weight: 700; }
 
     /* Within the output panel, result box merges into the container */
     .output-panel .result-wrap { position: relative; }
@@ -612,7 +612,7 @@
     #icon-moon { display: none;  }
 
     /* header lucide icon */
-    header > i[data-lucide] { width: 22px; height: 22px; stroke: var(--color-accent); flex-shrink: 0; }
+    header > i[data-lucide] { width: 24px; height: 24px; stroke: var(--color-accent); flex-shrink: 0; opacity: .9; }
 
     /* ── Changelog ──────────────────────────────────────────────────────── */
     .changelog-lead
@@ -817,19 +817,19 @@
 
     @media (prefers-color-scheme: light)
     {
-      .json-key   { color: #6f42c1; }
-      .json-str   { color: #116329; }
-      .json-num   { color: #953800; }
-      .json-bool  { color: #0550ae; }
-      .json-null  { color: #6e7781; font-style: italic; }
-      .json-punct { color: #57606a; }
+      .json-key   { color: #5a31a8; }
+      .json-str   { color: #0d5a28; }
+      .json-num   { color: #8a3000; }
+      .json-bool  { color: #0040a0; }
+      .json-null  { color: #57606a; font-style: italic; }
+      .json-punct { color: #444c56; }
     }
-    html.theme-light .json-key   { color: #6f42c1; }
-    html.theme-light .json-str   { color: #116329; }
-    html.theme-light .json-num   { color: #953800; }
-    html.theme-light .json-bool  { color: #0550ae; }
-    html.theme-light .json-null  { color: #6e7781; font-style: italic; }
-    html.theme-light .json-punct { color: #57606a; }
+    html.theme-light .json-key   { color: #5a31a8; }
+    html.theme-light .json-str   { color: #0d5a28; }
+    html.theme-light .json-num   { color: #8a3000; }
+    html.theme-light .json-bool  { color: #0040a0; }
+    html.theme-light .json-null  { color: #57606a; font-style: italic; }
+    html.theme-light .json-punct { color: #444c56; }
     html.theme-dark  .json-key   { color: #a78bdc; }
     html.theme-dark  .json-str   { color: #4ec994; }
     html.theme-dark  .json-num   { color: #d4a96a; }
@@ -855,11 +855,11 @@
     }
     .json-viewer tr:hover td
     {
-      background: rgba(255, 255, 255, .04);
+      background: rgba(255, 255, 255, .07);
     }
     html.theme-light .json-viewer tr:hover td
     {
-      background: rgba(0, 0, 0, .05);
+      background: rgba(0, 0, 0, .07);
     }
     .json-ln
     {
@@ -874,13 +874,13 @@
       font-size: 0.8em;
       vertical-align: top;
       line-height: inherit;
-      opacity: .55;
+      opacity: .7;
       min-width: 2ch;
     }
     html.theme-light .json-ln
     {
       opacity: 1;
-      color: #6e7781;
+      color: #57606a;
     }
     .json-line
     {
