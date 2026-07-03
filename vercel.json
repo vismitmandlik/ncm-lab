@@ -2,11 +2,13 @@
   "version": 2,
   "builds": [
     { "src": "index.html",  "use": "@vercel/static" },
+    { "src": "favicon.svg", "use": "@vercel/static" },
     { "src": "favicon.png", "use": "@vercel/static" },
     { "src": "api/decode.js", "use": "@vercel/node" }
   ],
   "routes": [
     { "src": "/api/decode",  "dest": "/api/decode.js" },
+    { "src": "/favicon.svg", "dest": "/favicon.svg" },
     { "src": "/favicon.png", "dest": "/favicon.png" },
     { "src": "/(.*)",        "dest": "/index.html" }
   ]

@@ -1,0 +1,40 @@
+<svg viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg" shape-rendering="geometricPrecision">
+
+  <!-- Background -->
+  <rect width="512" height="512" rx="88" ry="88" fill="#0b1120"/>
+
+  <!-- Outer hexagonal frame connecting the 6 orbital nodes — subtle structural layer -->
+  <polygon
+    points="256,94 395,175 395,337 256,418 117,337 117,175"
+    fill="none"
+    stroke="#ffffff"
+    stroke-width="5"
+    stroke-linejoin="round"
+    opacity="0.16"/>
+
+  <!-- Spokes: center → each orbital node -->
+  <g stroke="#ffffff" stroke-width="10" stroke-linecap="round" opacity="0.75">
+    <line x1="256" y1="256" x2="256" y2="94"/>
+    <line x1="256" y1="256" x2="395" y2="175"/>
+    <line x1="256" y1="256" x2="395" y2="337"/>
+    <line x1="256" y1="256" x2="256" y2="418"/>
+    <line x1="256" y1="256" x2="117" y2="337"/>
+    <line x1="256" y1="256" x2="117" y2="175"/>
+  </g>
+
+  <!-- Central control node: white ring with navy cutout -->
+  <circle cx="256" cy="256" r="60"  fill="#ffffff"/>
+  <circle cx="256" cy="256" r="34"  fill="#0b1120"/>
+
+  <!-- Single cyan accent: core of the control node -->
+  <circle cx="256" cy="256" r="14"  fill="#00d4ff"/>
+
+  <!-- 6 Orbital nodes -->
+  <circle cx="256" cy="94"  r="23" fill="#ffffff"/>
+  <circle cx="395" cy="175" r="23" fill="#ffffff"/>
+  <circle cx="395" cy="337" r="23" fill="#ffffff"/>
+  <circle cx="256" cy="418" r="23" fill="#ffffff"/>
+  <circle cx="117" cy="337" r="23" fill="#ffffff"/>
+  <circle cx="117" cy="175" r="23" fill="#ffffff"/>
+
+</svg>
