@@ -236,7 +236,7 @@
       color: var(--color-fg-on-accent);
       border-color: var(--color-accent);
       font-weight: 700;
-      padding: 10px 28px;
+      padding: 9px 28px;
     }
     .btn-primary:hover { opacity: .85; }
     .btn-ghost
@@ -456,6 +456,106 @@
     .diff-line.rem { background: var(--rem-bg); color: var(--rem-fg); }
     .diff-line.ctx { color: var(--muted); }
     .diff-line.hdr { color: var(--color-fg-subtle); font-style: italic; padding-left: 16px; }
+
+    /* ── Side-by-side diff table ── */
+    .diff-sbs-table
+    {
+      border-collapse: collapse;
+      width: 100%;
+      font-family: 'DM Mono', 'Cascadia Code', monospace;
+      font-size: 0.9rem;
+      line-height: 1.6;
+      table-layout: fixed;
+    }
+    .diff-sbs-table thead tr
+    {
+      background: var(--color-bg-emphasis);
+      border-bottom: 2px solid var(--color-border-default);
+    }
+    .diff-sbs-table thead th
+    {
+      padding: 6px 14px;
+      text-align: left;
+      font-size: 0.78rem;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--color-fg-muted);
+    }
+    .diff-sbs-table thead th:nth-child(3)
+    {
+      border-left: 2px solid var(--color-border-default);
+    }
+    .diff-sbs-ln
+    {
+      width: 48px;
+      min-width: 48px;
+      text-align: right;
+      padding: 2px 8px;
+      color: var(--color-fg-subtle);
+      border-right: 1px solid var(--color-border-muted);
+      user-select: none;
+      -webkit-user-select: none;
+      font-size: 0.8em;
+      opacity: .7;
+      vertical-align: top;
+      white-space: nowrap;
+    }
+    .diff-sbs-cell
+    {
+      padding: 2px 16px;
+      white-space: pre;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      vertical-align: top;
+    }
+    .diff-sbs-cell.add  { background: var(--add-bg); color: var(--add-fg); }
+    .diff-sbs-cell.rem  { background: var(--rem-bg); color: var(--rem-fg); }
+    .diff-sbs-cell.ctx  { color: var(--muted); }
+    .diff-sbs-cell.empty { background: var(--color-bg-overlay); }
+    .diff-sbs-ln.empty  { background: var(--color-bg-overlay); border-right-color: transparent; }
+    .diff-sbs-divider td { border-left: 2px solid var(--color-border-default) !important; }
+    .diff-sbs-hdr td
+    {
+      color: var(--color-fg-subtle);
+      font-style: italic;
+      padding: 2px 16px;
+      background: var(--color-bg-raised);
+    }
+
+    /* ── View-mode toggle ── */
+    .diff-view-toggle
+    {
+      margin-left: auto;
+      display: inline-flex;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 7px;
+      padding: 2px;
+      gap: 2px;
+    }
+    .diff-view-toggle button
+    {
+      padding: 6px 14px;
+      border: none;
+      border-radius: 5px;
+      background: transparent;
+      color: var(--muted);
+      font-size: 0.9rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background .15s, color .15s;
+    }
+    .diff-view-toggle button.on
+    {
+      background: var(--color-accent);
+      color: var(--color-fg-on-accent);
+    }
+    .diff-view-toggle button:not(.on):hover
+    {
+      color: var(--text);
+      background: rgba(255,255,255,.06);
+    }
     .no-diff { color: var(--success); margin-top: 14px; font-size: 0.95rem; }
 
     /* ── Mode toggle ── */
@@ -1107,30 +1207,34 @@
       <div class="col">
         <label>Left / Original</label>
         <textarea id="input-left"  rows="12" placeholder="Paste JSON or XML..."></textarea>
-        <div class="btn-group" style="margin-top:8px">
+        <div class="btn-group" style="margin-top:8px;justify-content:center">
           <button class="btn" data-side="left"  data-action="prettify">Prettify</button>
           <button class="btn" data-side="left"  data-action="minify"  >Minify</button>
           <button class="btn" data-side="left"  data-action="clear"   >Clear</button>
-          <button class="btn copy-btn" style="position:static" data-side="left" data-action="copy">Copy</button>
+          <button class="btn" data-side="left"  data-action="copy"    >Copy</button>
         </div>
       </div>
       <div class="col">
         <label>Right / Modified</label>
         <textarea id="input-right" rows="12" placeholder="Paste JSON or XML..."></textarea>
-        <div class="btn-group" style="margin-top:8px">
+        <div class="btn-group" style="margin-top:8px;justify-content:center">
           <button class="btn" data-side="right" data-action="prettify">Prettify</button>
           <button class="btn" data-side="right" data-action="minify"  >Minify</button>
           <button class="btn" data-side="right" data-action="clear"   >Clear</button>
-          <button class="btn copy-btn" style="position:static" data-side="right" data-action="copy">Copy</button>
+          <button class="btn" data-side="right" data-action="copy"    >Copy</button>
         </div>
       </div>
     </div>
 
     <hr />
 
-    <div class="btn-group">
+    <div class="btn-group" style="margin-bottom:0">
       <button class="btn btn-primary" id="btn-diff">Show Diff</button>
       <button class="btn"             id="btn-diff-clear">Clear Diff</button>
+      <div class="diff-view-toggle" id="diff-view-toggle" style="display:none">
+        <button class="on" data-view="inline" title="Inline unified view">Inline</button>
+        <button           data-view="split"  title="Side-by-side split view">Side by Side</button>
+      </div>
     </div>
 
     <div id="diff-result"></div>
@@ -1143,6 +1247,52 @@
     <p class="changelog-lead">
       New features, improvements, fixes, and security updates — newest first.
     </p>
+
+    <!-- ── v2.0 ── -->
+    <article class="release">
+      <header class="release-header">
+        <span class="release-version">v2.0</span>
+        <time class="release-date" datetime="2026-07-07">July 2026</time>
+        <span class="release-label">Diff views</span>
+      </header>
+      <p class="release-tagline">
+        Expanded diff capabilities in the JSON / XML tab with multiple comparison views.
+      </p>
+
+      <!-- Features -->
+      <section class="release-group">
+        <h3 class="release-group-title">Features</h3>
+        <ul class="entry-list">
+
+          <li class="entry">
+            <div class="entry-tag-col"><span class="entry-tag entry-tag-new">New</span></div>
+            <div class="entry-content">
+              <p class="entry-headline">Side-by-Side Diff View</p>
+              <p class="entry-detail">
+                The JSON / XML diff now supports a <strong>Side by Side</strong> view in addition
+                to the existing inline unified view. Toggle between the two modes using the
+                <em>Inline</em> / <em>Side by Side</em> control that appears after running a diff.
+                Modified lines are paired row-for-row across the left and right columns, with
+                JSON syntax highlighting preserved in both panes.
+              </p>
+            </div>
+          </li>
+
+          <li class="entry">
+            <div class="entry-tag-col"><span class="entry-tag entry-tag-improved">Improved</span></div>
+            <div class="entry-content">
+              <p class="entry-headline">Live View Re-render on Toggle</p>
+              <p class="entry-detail">
+                Switching between Inline and Side by Side instantly re-renders the current diff
+                without requiring a second <em>Show Diff</em> click. Line numbers are shown in
+                both panes of the side-by-side table for quick navigation.
+              </p>
+            </div>
+          </li>
+
+        </ul>
+      </section>
+    </article>
 
     <!-- ── v1.0 ── -->
     <!-- To add a new release: copy this <article> block, update the version/date, and paste it above this one. -->
@@ -1767,7 +1917,10 @@ document.getElementById('btn-copy-ts').addEventListener('click', function ()
 /* ═══════════════════════════════════════════════════════════════════════════
    JSON / XML
 ═══════════════════════════════════════════════════════════════════════════ */
-var currentMode = 'json';
+var currentMode    = 'json';
+var diffViewMode   = 'inline';
+var lastDiffLeft   = '';
+var lastDiffRight  = '';
 
 document.querySelectorAll('.seg-btn').forEach(function (btn)
 {
@@ -1778,6 +1931,25 @@ document.querySelectorAll('.seg-btn').forEach(function (btn)
     {
       b.classList.toggle('on', b.dataset.mode === currentMode);
     });
+  });
+});
+
+/* ── View-mode toggle (Inline / Side by Side) ── */
+document.querySelectorAll('#diff-view-toggle button').forEach(function (btn)
+{
+  btn.addEventListener('click', function ()
+  {
+    if (btn.dataset.view === diffViewMode) { return; }
+    diffViewMode = btn.dataset.view;
+    document.querySelectorAll('#diff-view-toggle button').forEach(function (b)
+    {
+      b.classList.toggle('on', b.dataset.view === diffViewMode);
+    });
+    /* Re-render with the new view if a diff is already displayed */
+    if (lastDiffLeft !== '' || lastDiffRight !== '')
+    {
+      renderDiff(lastDiffLeft, lastDiffRight);
+    }
   });
 });
 
@@ -1878,7 +2050,10 @@ document.getElementById('btn-diff').addEventListener('click', runDiff);
 btnDiffClear.addEventListener('click', function ()
 {
   document.getElementById('diff-result').innerHTML = '';
+  document.getElementById('diff-view-toggle').style.display = 'none';
   btnDiffClear.disabled = true;
+  lastDiffLeft  = '';
+  lastDiffRight = '';
 });
 
 function runDiff()
@@ -1889,21 +2064,46 @@ function runDiff()
   try { left  = parseAndFormat(left);  } catch (e) { /* keep raw */ }
   try { right = parseAndFormat(right); } catch (e) { /* keep raw */ }
 
+  lastDiffLeft  = left;
+  lastDiffRight = right;
+  renderDiff(left, right);
+}
+
+function renderDiff(left, right)
+{
   var leftLines  = left.split('\n');
   var rightLines = right.split('\n');
   var diff       = lcsLineDiff(leftLines, rightLines);
   var container  = document.getElementById('diff-result');
+  var toggle     = document.getElementById('diff-view-toggle');
 
   var hasChanges = diff.some(function (d) { return d[0] !== 0; });
   if (!hasChanges)
   {
     container.innerHTML = '<p class="no-diff">No differences found &mdash; both sides are identical.</p>';
+    toggle.style.display = 'none';
     btnDiffClear.disabled = false;
     return;
   }
 
-  var collapsed  = collapseContext(diff, 3);
-  var jsonDiff   = currentMode === 'json';
+  toggle.style.display = '';
+  btnDiffClear.disabled = false;
+
+  if (diffViewMode === 'split')
+  {
+    renderSideBySide(diff, container);
+  }
+  else
+  {
+    renderInline(diff, container);
+  }
+}
+
+/* ── Inline (unified) renderer ── */
+function renderInline(diff, container)
+{
+  var collapsed = collapseContext(diff, 3);
+  var jsonDiff  = currentMode === 'json';
   var html = '<div class="diff-out">';
   collapsed.forEach(function (d)
   {
@@ -1924,7 +2124,143 @@ function runDiff()
   });
   html += '</div>';
   container.innerHTML = html;
-  btnDiffClear.disabled = false;
+}
+
+/* ── Side-by-side renderer ── */
+function renderSideBySide(diff, container)
+{
+  var jsonDiff  = currentMode === 'json';
+  /* Build rows from the raw diff so line numbers stay accurate across ··· gaps */
+  var rows      = buildSbsRowsFromRaw(diff, 3);
+
+  function esc(s)
+  {
+    return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  }
+  function cellHtml(line)
+  {
+    return jsonDiff ? tokenizeJSON(line) : esc(line);
+  }
+
+  var html = '<div class="diff-out"><table class="diff-sbs-table">'
+           + '<colgroup>'
+           + '<col style="width:52px">'
+           + '<col>'
+           + '<col style="width:52px">'
+           + '<col>'
+           + '</colgroup>'
+           + '<thead><tr>'
+           + '<th colspan="2">Left / Original</th>'
+           + '<th colspan="2" style="border-left:2px solid var(--color-border-default)">Right / Modified</th>'
+           + '</tr></thead><tbody>';
+
+  rows.forEach(function (row)
+  {
+    if (row.type === 'hdr')
+    {
+      html += '<tr class="diff-sbs-hdr">'
+            + '<td class="diff-sbs-ln"></td>'
+            + '<td class="diff-sbs-cell ctx" colspan="3">···</td>'
+            + '</tr>';
+      return;
+    }
+
+    var L = row.left;
+    var R = row.right;
+
+    var leftLnHtml   = L ? L.ln   : '';
+    var rightLnHtml  = R ? R.ln   : '';
+    var leftCls      = L ? L.type : 'empty';
+    var rightCls     = R ? R.type : 'empty';
+    var leftContent  = L ? cellHtml(L.line) : '';
+    var rightContent = R ? cellHtml(R.line) : '';
+    var leftLnCls    = L ? '' : ' empty';
+    var rightLnCls   = R ? '' : ' empty';
+
+    html += '<tr>'
+          + '<td class="diff-sbs-ln' + leftLnCls  + '">' + leftLnHtml  + '</td>'
+          + '<td class="diff-sbs-cell ' + leftCls  + '">' + leftContent  + '</td>'
+          + '<td class="diff-sbs-ln' + rightLnCls + '" style="border-left:2px solid var(--color-border-default)">' + rightLnHtml + '</td>'
+          + '<td class="diff-sbs-cell ' + rightCls + '">' + rightContent + '</td>'
+          + '</tr>';
+  });
+
+  html += '</tbody></table></div>';
+  container.innerHTML = html;
+}
+
+/* Build pairable row objects from the raw LCS diff for side-by-side display.
+   Works from raw (not collapsed) diff so absolute line numbers are always correct.
+   Context lines more than `ctx` positions away from a change are replaced by a
+   single ··· separator row, with line counters still advanced accurately. */
+function buildSbsRowsFromRaw(diff, ctx)
+{
+  /* Determine which indices to keep (within ctx of any change) */
+  var keep = new Set();
+  diff.forEach(function (d, idx)
+  {
+    if (d[0] !== 0)
+    {
+      for (var k = Math.max(0, idx - ctx); k <= Math.min(diff.length - 1, idx + ctx); k++)
+      {
+        keep.add(k);
+      }
+    }
+  });
+
+  var rows     = [];
+  var leftLn   = 1;
+  var rightLn  = 1;
+  var skipping = false;
+  var i        = 0;
+
+  while (i < diff.length)
+  {
+    if (!keep.has(i))
+    {
+      /* Collapsed context — emit one separator per run, advance counters */
+      if (!skipping) { rows.push({ type: 'hdr' }); skipping = true; }
+      if (diff[i][0] !== 1)  { leftLn++;  }   /* line exists on left  */
+      if (diff[i][0] !== -1) { rightLn++; }   /* line exists on right */
+      i++;
+      continue;
+    }
+
+    skipping = false;
+    var d = diff[i];
+
+    if (d[0] === 0)
+    {
+      rows.push({ left: { type: 'ctx', line: d[1], ln: leftLn }, right: { type: 'ctx', line: d[1], ln: rightLn } });
+      leftLn++; rightLn++;
+      i++;
+      continue;
+    }
+
+    /* Gather a consecutive run of removes then adds */
+    var removes = [];
+    var adds    = [];
+    while (i < diff.length && keep.has(i) && diff[i][0] === -1)
+    {
+      removes.push({ line: diff[i][1], ln: leftLn++ });
+      i++;
+    }
+    while (i < diff.length && keep.has(i) && diff[i][0] ===  1)
+    {
+      adds.push({ line: diff[i][1], ln: rightLn++ });
+      i++;
+    }
+
+    var maxLen = Math.max(removes.length, adds.length);
+    for (var k = 0; k < maxLen; k++)
+    {
+      var L = k < removes.length ? { type: 'rem', line: removes[k].line, ln: removes[k].ln } : null;
+      var R = k < adds.length    ? { type: 'add', line: adds[k].line,    ln: adds[k].ln }    : null;
+      rows.push({ left: L, right: R });
+    }
+  }
+
+  return rows;
 }
 
 function lcsLineDiff(left, right)
