@@ -219,6 +219,9 @@
     /* ── Buttons ── */
     .btn
     {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
       padding: 9px 20px;
       border: 1px solid var(--border);
       border-radius: 6px;
@@ -228,15 +231,28 @@
       background: var(--surface2);
       color: var(--text);
       transition: background .15s, opacity .15s;
+      white-space: nowrap;
     }
     .btn:hover { background: var(--color-bg-emphasis); }
+    /* Icon sizing inside any button (Lucide replaces <i> with <svg>) */
+    .btn svg { width: 15px; height: 15px; flex-shrink: 0; }
+    /* Square icon-only button */
+    .btn-icon
+    {
+      width: 36px;
+      height: 36px;
+      padding: 0;
+      justify-content: center;
+      border-radius: 7px;
+    }
+    .btn-icon svg { width: 16px; height: 16px; }
     .btn-primary
     {
       background: var(--color-accent);
       color: var(--color-fg-on-accent);
       border-color: var(--color-accent);
       font-weight: 700;
-      padding: 9px 28px;
+      padding: 9px 22px;
     }
     .btn-primary:hover { opacity: .85; }
     .btn-ghost
@@ -339,9 +355,7 @@
     .copy-btn
     {
       position: absolute;
-      top: 10px; right: 10px;
-      padding: 4px 12px;
-      font-size: 0.875rem;
+      top: 9px; right: 9px;
     }
 
     /* ── Output panel (decode output section) ─────────────────────────────── */
@@ -389,16 +403,14 @@
     .output-panel .result.ok  { border-top: 2px solid var(--color-success); }
     .output-panel .result.err { border-top: 2px solid var(--color-error); }
 
-    /* Copy button inside the panel header — static layout */
+    /* Copy button inside the panel header — static icon-only layout */
     .output-panel .copy-btn
     {
       position: static;
-      padding: 4px 12px;
-      font-size: 0.8rem;
+      margin-left: auto;
       opacity: 0;
       pointer-events: none;
       transition: opacity .2s;
-      margin-left: auto;
     }
     .output-panel .copy-btn.visible
     {
@@ -536,16 +548,20 @@
     }
     .diff-view-toggle button
     {
-      padding: 6px 14px;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 6px 12px;
       border: none;
       border-radius: 5px;
       background: transparent;
       color: var(--muted);
-      font-size: 0.9rem;
+      font-size: 0.875rem;
       font-weight: 600;
       cursor: pointer;
       transition: background .15s, color .15s;
     }
+    .diff-view-toggle button svg { width: 14px; height: 14px; flex-shrink: 0; }
     .diff-view-toggle button.on
     {
       background: var(--color-accent);
@@ -631,9 +647,10 @@
       max-width: 360px;
       line-height: 1.45;
     }
-    .toast.show  { opacity: 1; transform: translateY(0); }
-    .toast.t-err { border-left-color: var(--error);   color: var(--error); }
-    .toast.t-ok  { border-left-color: var(--success); }
+    .toast.show   { opacity: 1; transform: translateY(0); }
+    .toast.t-err  { border-left-color: var(--error);   color: var(--error); }
+    .toast.t-ok   { border-left-color: var(--success); }
+    .toast.t-warn { border-left-color: var(--color-warning, #d97706); color: var(--color-warning, #d97706); }
 
     /* ── Spinner for loading states ── */
     @keyframes spin { to { transform: rotate(360deg); } }
@@ -1068,9 +1085,10 @@
       .subtitle { font-size: 0.9rem; }
       input[type="text"], input[type="number"], textarea, select { padding: 10px 13px; font-size: 0.9375rem; }
       .btn { padding: 10px 18px; font-size: 0.9rem; }
+      .btn-icon { width: 36px; height: 36px; padding: 0; }
       .input-zone textarea { min-height: 140px; padding-top: 40px; }
       .result { max-height: 38vh; font-size: 0.875rem; padding: 12px 40px 12px 12px; }
-      .copy-btn { padding: 3px 10px; font-size: 0.8rem; top: 8px; right: 8px; }
+      .copy-btn { top: 8px; right: 8px; }
       .diff-line { font-size: 0.8rem; padding: 1px 10px; }
       .epoch-table th, .epoch-table td { padding: 10px 12px; font-size: 0.9rem; }
     }
@@ -1125,14 +1143,14 @@
     </div>
 
     <div class="btn-group">
-      <button class="btn btn-primary" id="btn-decode">Decode</button>
-      <button class="btn btn-ghost" id="btn-decode-clear">Clear</button>
+      <button class="btn btn-primary" id="btn-decode"><i data-lucide="zap"></i> Decode</button>
+      <button class="btn btn-ghost" id="btn-decode-clear"><i data-lucide="trash-2"></i> Clear</button>
     </div>
 
     <div class="output-panel">
       <div class="output-panel-hd">
         <div class="output-panel-title" id="decode-out-label">Output</div>
-        <button class="btn copy-btn" id="btn-copy-decode">Copy</button>
+        <button class="btn btn-icon copy-btn" id="btn-copy-decode" title="Copy output"><i data-lucide="copy"></i></button>
       </div>
       <div class="result-wrap">
         <div class="result" id="decode-out"></div>
@@ -1159,9 +1177,9 @@
           <select id="tz-select"></select>
         </div>
         <div class="btn-group">
-          <button class="btn btn-primary" id="btn-epoch-convert">Convert</button>
-          <button class="btn" id="btn-epoch-now">Now</button>
-          <button class="btn" id="btn-epoch-clear">Clear</button>
+          <button class="btn btn-primary" id="btn-epoch-convert"><i data-lucide="arrow-right-left"></i> Convert</button>
+          <button class="btn" id="btn-epoch-now"><i data-lucide="clock"></i> Now</button>
+          <button class="btn btn-icon btn-ghost" id="btn-epoch-clear" title="Clear"><i data-lucide="trash-2"></i></button>
         </div>
         <div id="epoch-result-wrap" style="display:none">
           <div class="table-scroll">
@@ -1182,12 +1200,12 @@
           <p class="hint">ISO 8601 / RFC 2822 / any format JS can parse.</p>
         </div>
         <div class="btn-group">
-          <button class="btn btn-primary" id="btn-ts-convert">Convert</button>
-          <button class="btn" id="btn-ts-clear">Clear</button>
+          <button class="btn btn-primary" id="btn-ts-convert"><i data-lucide="arrow-right-left"></i> Convert</button>
+          <button class="btn btn-icon btn-ghost" id="btn-ts-clear" title="Clear"><i data-lucide="trash-2"></i></button>
         </div>
         <div class="result-wrap">
           <div class="result" id="ts-out" style="min-height:48px"></div>
-          <button class="btn copy-btn" id="btn-copy-ts">Copy</button>
+          <button class="btn btn-icon copy-btn" id="btn-copy-ts" title="Copy"><i data-lucide="copy"></i></button>
         </div>
       </div>
     </div>
@@ -1208,20 +1226,20 @@
         <label>Left / Original</label>
         <textarea id="input-left"  rows="12" placeholder="Paste JSON or XML..."></textarea>
         <div class="btn-group" style="margin-top:8px;justify-content:center">
-          <button class="btn" data-side="left"  data-action="prettify">Prettify</button>
-          <button class="btn" data-side="left"  data-action="minify"  >Minify</button>
-          <button class="btn" data-side="left"  data-action="clear"   >Clear</button>
-          <button class="btn" data-side="left"  data-action="copy"    >Copy</button>
+          <button class="btn" data-side="left" data-action="prettify"><i data-lucide="wand-2"></i> Prettify</button>
+          <button class="btn" data-side="left" data-action="minify"  ><i data-lucide="minimize-2"></i> Minify</button>
+          <button class="btn btn-icon btn-ghost" data-side="left" data-action="clear" title="Clear"><i data-lucide="trash-2"></i></button>
+          <button class="btn btn-icon" data-side="left" data-action="copy" title="Copy to clipboard"><i data-lucide="copy"></i></button>
         </div>
       </div>
       <div class="col">
         <label>Right / Modified</label>
         <textarea id="input-right" rows="12" placeholder="Paste JSON or XML..."></textarea>
         <div class="btn-group" style="margin-top:8px;justify-content:center">
-          <button class="btn" data-side="right" data-action="prettify">Prettify</button>
-          <button class="btn" data-side="right" data-action="minify"  >Minify</button>
-          <button class="btn" data-side="right" data-action="clear"   >Clear</button>
-          <button class="btn" data-side="right" data-action="copy"    >Copy</button>
+          <button class="btn" data-side="right" data-action="prettify"><i data-lucide="wand-2"></i> Prettify</button>
+          <button class="btn" data-side="right" data-action="minify"  ><i data-lucide="minimize-2"></i> Minify</button>
+          <button class="btn btn-icon btn-ghost" data-side="right" data-action="clear" title="Clear"><i data-lucide="trash-2"></i></button>
+          <button class="btn btn-icon" data-side="right" data-action="copy" title="Copy to clipboard"><i data-lucide="copy"></i></button>
         </div>
       </div>
     </div>
@@ -1229,11 +1247,11 @@
     <hr />
 
     <div class="btn-group" style="margin-bottom:0">
-      <button class="btn btn-primary" id="btn-diff">Show Diff</button>
-      <button class="btn"             id="btn-diff-clear">Clear Diff</button>
+      <button class="btn btn-primary" id="btn-diff"><i data-lucide="git-compare"></i> Diff</button>
+      <button class="btn btn-icon btn-ghost" id="btn-diff-clear" title="Clear diff"><i data-lucide="trash-2"></i></button>
       <div class="diff-view-toggle" id="diff-view-toggle" style="display:none">
-        <button class="on" data-view="inline" title="Inline unified view">Inline</button>
-        <button           data-view="split"  title="Side-by-side split view">Side by Side</button>
+        <button class="on" data-view="inline" title="Inline unified view"><i data-lucide="align-justify"></i> Inline</button>
+        <button           data-view="split"  title="Side-by-side split view"><i data-lucide="columns-2"></i> Split</button>
       </div>
     </div>
 
@@ -1605,7 +1623,7 @@ document.getElementById('btn-decode').addEventListener('click', function ()
   .finally(function ()
   {
     btn.disabled  = false;
-    btn.innerHTML = 'Decode';
+    btn.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg> Decode';
   });
 });
 
@@ -1845,9 +1863,14 @@ function convertEpoch()
 {
   var val = document.getElementById('epoch-input').value.trim();
   var tz  = tzSelect.value;
-  var ms  = toMs(val);
   var wrap = document.getElementById('epoch-result-wrap');
-  if (!ms) { wrap.style.display = 'none'; return; }
+  if (!val)
+  {
+    showToast('Enter an epoch value to convert.', 'warn');
+    return;
+  }
+  var ms  = toMs(val);
+  if (!ms) { showToast('Not a valid epoch — enter a Unix timestamp in seconds or milliseconds.', 'err'); wrap.style.display = 'none'; return; }
 
   var d = new Date(ms);
   var rows = [
@@ -1889,11 +1912,16 @@ document.getElementById('ts-input').addEventListener('keydown', function (e)
 function convertTs()
 {
   var val = document.getElementById('ts-input').value.trim();
-  var ms  = Date.parse(val);
   var out = document.getElementById('ts-out');
+  if (!val)
+  {
+    showToast('Enter a datetime string to convert.', 'warn');
+    return;
+  }
+  var ms = Date.parse(val);
   if (isNaN(ms))
   {
-    showResult(out, 'Cannot parse — try ISO 8601: 2025-07-01T10:30:00+05:30', 'err');
+    showResult(out, 'Unrecognised format — try ISO 8601, e.g. 2025-07-01T10:30:00+05:30', 'err');
   }
   else
   {
@@ -1995,6 +2023,11 @@ document.querySelectorAll('[data-action]').forEach(function (btn)
 
     if (action === 'prettify')
     {
+      if (!el.value.trim())
+      {
+        showToast('Paste some ' + currentMode.toUpperCase() + ' content first.', 'warn');
+        return;
+      }
       try
       {
         el.value = parseAndFormat(el.value);
@@ -2003,11 +2036,16 @@ document.querySelectorAll('[data-action]').forEach(function (btn)
       catch (e)
       {
         flashBorder(el, 'var(--error)');
-        showToast('Parse error: ' + e.message, 'err');
+        showToast('Invalid ' + currentMode.toUpperCase() + ' — fix syntax errors and try again.', 'err');
       }
     }
     else if (action === 'minify')
     {
+      if (!el.value.trim())
+      {
+        showToast('Paste some ' + currentMode.toUpperCase() + ' content first.', 'warn');
+        return;
+      }
       try
       {
         if (currentMode === 'json')
@@ -2023,7 +2061,7 @@ document.querySelectorAll('[data-action]').forEach(function (btn)
       catch (e)
       {
         flashBorder(el, 'var(--error)');
-        showToast('Parse error: ' + e.message, 'err');
+        showToast('Invalid ' + currentMode.toUpperCase() + ' — fix syntax errors and try again.', 'err');
       }
     }
     else if (action === 'clear')
@@ -2032,6 +2070,11 @@ document.querySelectorAll('[data-action]').forEach(function (btn)
     }
     else if (action === 'copy')
     {
+      if (!el.value.trim())
+      {
+        showToast('Nothing to copy — the input is empty.', 'warn');
+        return;
+      }
       copyText(el.value, btn);
     }
   });
@@ -2060,6 +2103,12 @@ function runDiff()
 {
   var left  = document.getElementById('input-left').value;
   var right = document.getElementById('input-right').value;
+
+  if (!left.trim() && !right.trim())
+  {
+    showToast('Paste content into at least one side before running a diff.', 'warn');
+    return;
+  }
 
   try { left  = parseAndFormat(left);  } catch (e) { /* keep raw */ }
   try { right = parseAndFormat(right); } catch (e) { /* keep raw */ }
