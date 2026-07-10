@@ -1072,6 +1072,210 @@
       .diff-out { max-height: 50vh; }
     }
 
+    /* ═══════════════════════════════════════════════════════════════════════
+       Troubleshoot Tab
+    ═══════════════════════════════════════════════════════════════════════ */
+
+    /* Search bar */
+    .ts-search-wrap
+    {
+      position: relative;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 24px;
+    }
+    .ts-search-icon
+    {
+      position: absolute;
+      left: 14px;
+      width: 16px; height: 16px;
+      color: var(--muted);
+      pointer-events: none;
+    }
+    .ts-search
+    {
+      flex: 1;
+      padding: 11px 44px 11px 42px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      background: var(--surface2);
+      color: var(--text);
+      font-size: 0.95rem;
+      outline: none;
+      transition: border-color .15s;
+    }
+    .ts-search:focus { border-color: var(--color-accent); }
+    .ts-search-clear { position: absolute; right: 10px; }
+    .ts-no-results { color: var(--muted); text-align: center; padding: 40px 0; font-size: 0.95rem; }
+
+    /* Cards */
+    .ts-list { display: flex; flex-direction: column; gap: 10px; }
+    .ts-card
+    {
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      overflow: hidden;
+      background: var(--surface);
+      transition: box-shadow .15s;
+    }
+    .ts-card:has(.ts-body.open) { box-shadow: 0 2px 16px rgba(0,0,0,.12); }
+    .ts-card-hd
+    {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 15px 18px;
+      background: none;
+      border: none;
+      cursor: pointer;
+      text-align: left;
+      color: var(--text);
+      font-size: 0.95rem;
+      font-weight: 600;
+      transition: background .12s;
+    }
+    .ts-card-hd:hover { background: var(--surface2); }
+    .ts-num
+    {
+      font-family: 'DM Mono', 'Cascadia Code', monospace;
+      font-size: 0.78rem;
+      font-weight: 700;
+      color: var(--color-accent);
+      background: var(--color-accent-subtle);
+      border: 1px solid var(--color-accent-border);
+      border-radius: 5px;
+      padding: 2px 8px;
+      flex-shrink: 0;
+      letter-spacing: .04em;
+    }
+    .ts-title { flex: 1; }
+    .ts-chevron
+    {
+      width: 17px; height: 17px;
+      color: var(--muted);
+      flex-shrink: 0;
+      transition: transform .22s;
+    }
+    .ts-body.open ~ .ts-card-hd .ts-chevron,
+    .ts-card:has(.ts-body.open) .ts-chevron { transform: rotate(180deg); }
+
+    /* Body (accordion) */
+    .ts-body
+    {
+      display: none;
+      padding: 0 20px 20px;
+      border-top: 1px solid var(--border);
+    }
+    .ts-body.open { display: block; }
+
+    /* Sections */
+    .ts-section
+    {
+      margin-top: 16px;
+      padding: 13px 16px;
+      border-radius: 8px;
+      border-left: 3px solid transparent;
+    }
+    .ts-label
+    {
+      display: block;
+      font-size: 0.72rem;
+      font-weight: 800;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      margin-bottom: 8px;
+    }
+    .ts-section ul, .ts-section ol { margin: 0; padding-left: 20px; }
+    .ts-section li { margin-bottom: 4px; font-size: 0.9rem; line-height: 1.55; }
+    .ts-section p  { margin: 6px 0; font-size: 0.9rem; line-height: 1.55; }
+
+    .ts-symptom
+    {
+      background: rgba(217,119,6,.07);
+      border-left-color: #d97706;
+    }
+    .ts-symptom .ts-label { color: #d97706; }
+
+    .ts-cause
+    {
+      background: rgba(185,28,28,.07);
+      border-left-color: var(--error);
+    }
+    .ts-cause .ts-label { color: var(--error); }
+
+    .ts-resolution
+    {
+      background: rgba(22,163,74,.07);
+      border-left-color: var(--color-success);
+    }
+    .ts-resolution .ts-label { color: var(--color-success); }
+
+    .ts-note
+    {
+      background: var(--color-accent-subtle);
+      border-left-color: var(--color-accent);
+    }
+    .ts-note .ts-label { color: var(--color-accent); }
+
+    /* Code blocks */
+    .ts-code-wrap
+    {
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+      margin: 10px 0 6px;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 7px;
+      overflow: hidden;
+    }
+    .ts-code
+    {
+      flex: 1;
+      display: block;
+      font-family: 'DM Mono', 'Cascadia Code', monospace;
+      font-size: 0.85rem;
+      padding: 10px 14px;
+      white-space: pre;
+      overflow-x: auto;
+      color: var(--text);
+      line-height: 1.55;
+    }
+    .ts-copy
+    {
+      flex-shrink: 0;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 34px;
+      height: 34px;
+      margin: 5px 5px 0 0;
+      border: none;
+      border-radius: 6px;
+      background: transparent;
+      color: var(--muted);
+      cursor: pointer;
+      transition: background .12s, color .12s;
+    }
+    .ts-copy:hover { background: var(--color-bg-emphasis); color: var(--text); }
+    .ts-copy svg { width: 14px; height: 14px; }
+
+    /* Inline code in prose */
+    .ts-section code:not(.ts-code)
+    {
+      font-family: 'DM Mono', 'Cascadia Code', monospace;
+      font-size: 0.85em;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 1px 6px;
+    }
+
+    /* Hidden during search */
+    .ts-card.ts-hidden { display: none; }
+
     /* Mobile (≤ 480 px) */
     @media (max-width: 480px)
     {
@@ -1114,6 +1318,7 @@
   <div class="tab active" data-tab="decode"   >Decode Field</div>
   <div class="tab"        data-tab="epoch"   >Epoch Converter</div>
   <div class="tab"        data-tab="jsonxml" >JSON / XML</div>
+  <div class="tab"        data-tab="troubleshoot">Troubleshoot</div>
   <div class="tab"        data-tab="changelog">Changelog</div>
 </nav>
 
@@ -1258,6 +1463,434 @@
     <div id="diff-result"></div>
   </div>
 
+
+  <!-- ═══════════════════════ TROUBLESHOOT ════════════════════════════════ -->
+  <div class="panel" id="panel-troubleshoot">
+    <h2>NCM Troubleshooting Guide</h2>
+    <p class="subtitle">Structured steps for common NCM issues. Follow resolutions in the order listed.</p>
+
+    <div class="ts-search-wrap">
+      <i data-lucide="search" class="ts-search-icon"></i>
+      <input type="text" id="ts-search" class="ts-search" placeholder="Search issues, symptoms, commands…" autocomplete="off" />
+      <button class="btn btn-icon btn-ghost ts-search-clear" id="ts-search-clear" title="Clear search" style="display:none"><i data-lucide="x"></i></button>
+    </div>
+    <p class="ts-no-results" id="ts-no-results" style="display:none">No matching issues found.</p>
+
+    <div class="ts-list" id="ts-list">
+
+      <!-- ── 1 ── -->
+      <div class="ts-card" data-index="1">
+        <button class="ts-card-hd">
+          <span class="ts-num">01</span>
+          <span class="ts-title">Motadata UI Terminal Commands Not Working</span>
+          <i data-lucide="chevron-down" class="ts-chevron"></i>
+        </button>
+        <div class="ts-body">
+          <div class="ts-section ts-symptom">
+            <span class="ts-label">Symptom</span>
+            <ul>
+              <li>Commands fail or return inconsistent output in Motadata UI terminal.</li>
+              <li>Unexpected device response during execution.</li>
+            </ul>
+          </div>
+          <div class="ts-section ts-cause">
+            <span class="ts-label">Cause</span>
+            <ul>
+              <li>Connectivity issues between Motadata server and device.</li>
+              <li>Incorrect credential permissions or privilege level.</li>
+            </ul>
+          </div>
+          <div class="ts-section ts-resolution">
+            <span class="ts-label">Resolution</span>
+            <ol>
+              <li>Login to the Motadata server.
+                <div class="ts-code-wrap"><code class="ts-code">ssh &lt;motadata_server_user&gt;@&lt;motadata_server_ip&gt;</code><button class="ts-copy" title="Copy"><i data-lucide="copy"></i></button></div>
+              </li>
+              <li>From the server, test SSH connectivity to the device.
+                <div class="ts-code-wrap"><code class="ts-code">ssh &lt;device_user&gt;@&lt;device_ip&gt;</code><button class="ts-copy" title="Copy"><i data-lucide="copy"></i></button></div>
+              </li>
+            </ol>
+          </div>
+          <div class="ts-section ts-note">
+            <span class="ts-label">Note</span>
+            <p>Always validate connectivity from the Motadata server itself. Testing from another machine does not verify collector connectivity.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── 2 ── -->
+      <div class="ts-card" data-index="2">
+        <button class="ts-card-hd">
+          <span class="ts-num">02</span>
+          <span class="ts-title">Commands Work in PuTTY but Fail in Motadata</span>
+          <i data-lucide="chevron-down" class="ts-chevron"></i>
+        </button>
+        <div class="ts-body">
+          <div class="ts-section ts-symptom">
+            <span class="ts-label">Symptom</span>
+            <ul>
+              <li>Command works during manual SSH session but fails via NCM execution.</li>
+            </ul>
+          </div>
+          <div class="ts-section ts-cause">
+            <span class="ts-label">Cause</span>
+            <ul>
+              <li>Credential profile user mismatches.</li>
+              <li>Insufficient privilege level assigned to configured user.</li>
+            </ul>
+          </div>
+          <div class="ts-section ts-resolution">
+            <span class="ts-label">Resolution</span>
+            <p>Verify privilege level on the device:</p>
+            <div class="ts-code-wrap"><code class="ts-code">show privilege</code><button class="ts-copy" title="Copy"><i data-lucide="copy"></i></button></div>
+            <p>Ensure the Motadata credential profile uses identical username and privilege level as the manual login.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── 3 ── -->
+      <div class="ts-card" data-index="3">
+        <button class="ts-card-hd">
+          <span class="ts-num">03</span>
+          <span class="ts-title">Command Fails During Template Execution</span>
+          <i data-lucide="chevron-down" class="ts-chevron"></i>
+        </button>
+        <div class="ts-body">
+          <div class="ts-section ts-symptom">
+            <span class="ts-label">Symptom</span>
+            <ul>
+              <li>Specific commands fail when executed through a configuration template.</li>
+            </ul>
+          </div>
+          <div class="ts-section ts-cause">
+            <span class="ts-label">Cause</span>
+            <ul>
+              <li>Command requires configuration mode but is executed in normal mode.</li>
+            </ul>
+          </div>
+          <div class="ts-section ts-resolution">
+            <span class="ts-label">Resolution</span>
+            <p>Add the following commands at the beginning of the action commands section in the template:</p>
+            <div class="ts-code-wrap"><code class="ts-code">configure terminal
+&lt;your configuration command&gt;
+end</code><button class="ts-copy" title="Copy"><i data-lucide="copy"></i></button></div>
+          </div>
+          <div class="ts-section ts-note">
+            <span class="ts-label">Note</span>
+            <p>Ensure configuration commands are placed before the <code>end</code> statement in the template.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── 4 ── -->
+      <div class="ts-card" data-index="4">
+        <button class="ts-card-hd">
+          <span class="ts-num">04</span>
+          <span class="ts-title">File Already Present Error During Backup / Restore / Upgrade</span>
+          <i data-lucide="chevron-down" class="ts-chevron"></i>
+        </button>
+        <div class="ts-body">
+          <div class="ts-section ts-symptom">
+            <span class="ts-label">Symptom</span>
+            <ul>
+              <li>Operation fails with a <em>file already exists</em> error.</li>
+            </ul>
+          </div>
+          <div class="ts-section ts-cause">
+            <span class="ts-label">Cause</span>
+            <ul>
+              <li>Previous firmware or configuration file already exists on device storage.</li>
+            </ul>
+          </div>
+          <div class="ts-section ts-resolution">
+            <span class="ts-label">Resolution</span>
+            <p>Remove the existing file from the device before reattempting:</p>
+            <div class="ts-code-wrap"><code class="ts-code">delete flash:&lt;filename&gt;
+# or
+rm /flash/&lt;filename&gt;</code><button class="ts-copy" title="Copy"><i data-lucide="copy"></i></button></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── 5 ── -->
+      <div class="ts-card" data-index="5">
+        <button class="ts-card-hd">
+          <span class="ts-num">05</span>
+          <span class="ts-title">SSH Timeout Error</span>
+          <i data-lucide="chevron-down" class="ts-chevron"></i>
+        </button>
+        <div class="ts-body">
+          <div class="ts-section ts-cause">
+            <span class="ts-label">Cause</span>
+            <ul>
+              <li>Device response exceeds the configured timeout threshold.</li>
+            </ul>
+          </div>
+          <div class="ts-section ts-resolution">
+            <span class="ts-label">Resolution</span>
+            <p>Increase the timeout in <code>motadata.json</code>:</p>
+            <div class="ts-code-wrap"><code class="ts-code">"config.request.timeout.seconds": 300</code><button class="ts-copy" title="Copy"><i data-lucide="copy"></i></button></div>
+          </div>
+          <div class="ts-section ts-note">
+            <span class="ts-label">Note</span>
+            <p>Maximum allowed value is <strong>300 seconds</strong>. Restart Motadata services after updating <code>motadata.json</code>.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── 6 ── -->
+      <div class="ts-card" data-index="6">
+        <button class="ts-card-hd">
+          <span class="ts-num">06</span>
+          <span class="ts-title">Process Kill Timeout Error</span>
+          <i data-lucide="chevron-down" class="ts-chevron"></i>
+        </button>
+        <div class="ts-body">
+          <div class="ts-section ts-cause">
+            <span class="ts-label">Cause</span>
+            <ul>
+              <li>Probe batch execution exceeds the configured timeout value.</li>
+            </ul>
+          </div>
+          <div class="ts-section ts-resolution">
+            <span class="ts-label">Resolution</span>
+            <p>Increase the timeout in <code>motadata.json</code>:</p>
+            <div class="ts-code-wrap"><code class="ts-code">"plugin.engine.probe.batch.timeout.seconds": 600</code><button class="ts-copy" title="Copy"><i data-lucide="copy"></i></button></div>
+          </div>
+          <div class="ts-section ts-note">
+            <span class="ts-label">Note</span>
+            <p>Maximum allowed value is <strong>600 seconds</strong>. Restart services after modification.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── 7 ── -->
+      <div class="ts-card" data-index="7">
+        <button class="ts-card-hd">
+          <span class="ts-num">07</span>
+          <span class="ts-title">SSH Port 22 Not Reachable</span>
+          <i data-lucide="chevron-down" class="ts-chevron"></i>
+        </button>
+        <div class="ts-body">
+          <div class="ts-section ts-symptom">
+            <span class="ts-label">Symptom</span>
+            <ul>
+              <li>Discovery, Backup, or Restore fails immediately.</li>
+            </ul>
+          </div>
+          <div class="ts-section ts-cause">
+            <span class="ts-label">Cause</span>
+            <ul>
+              <li>SSH port blocked by firewall or network ACL.</li>
+            </ul>
+          </div>
+          <div class="ts-section ts-resolution">
+            <span class="ts-label">Resolution</span>
+            <p>Test port reachability from the Motadata server:</p>
+            <div class="ts-code-wrap"><code class="ts-code">nc -zv &lt;device_ip&gt; 22
+# or
+telnet &lt;device_ip&gt; 22</code><button class="ts-copy" title="Copy"><i data-lucide="copy"></i></button></div>
+            <p>Ensure firewall rules allow Collector-to-device SSH communication on port 22.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── 8 ── -->
+      <div class="ts-card" data-index="8">
+        <button class="ts-card-hd">
+          <span class="ts-num">08</span>
+          <span class="ts-title">TFTP / FTP Backup or Restore Failure</span>
+          <i data-lucide="chevron-down" class="ts-chevron"></i>
+        </button>
+        <div class="ts-body">
+          <div class="ts-section ts-symptom">
+            <span class="ts-label">Symptom</span>
+            <ul>
+              <li>Backup or Restore stops midway or fails during file transfer.</li>
+            </ul>
+          </div>
+          <div class="ts-section ts-cause">
+            <span class="ts-label">Cause</span>
+            <ul>
+              <li>TFTP / FTP service not running.</li>
+              <li>Port 21 blocked by firewall.</li>
+            </ul>
+          </div>
+          <div class="ts-section ts-resolution">
+            <span class="ts-label">Resolution</span>
+            <p>Check port reachability and verify the FTP service:</p>
+            <div class="ts-code-wrap"><code class="ts-code">nc -zv &lt;device_ip&gt; 21
+systemctl status vsftpd</code><button class="ts-copy" title="Copy"><i data-lucide="copy"></i></button></div>
+            <p>Verify FTP service availability and network connectivity.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── 9 ── -->
+      <div class="ts-card" data-index="9">
+        <button class="ts-card-hd">
+          <span class="ts-num">09</span>
+          <span class="ts-title">Backup File Not Copied to Storage Profile on Every Backup</span>
+          <i data-lucide="chevron-down" class="ts-chevron"></i>
+        </button>
+        <div class="ts-body">
+          <div class="ts-section ts-symptom">
+            <span class="ts-label">Symptom</span>
+            <ul>
+              <li>Backup file is not copied to the storage location during every backup operation.</li>
+              <li>Storage location does not show a new file after each scheduled backup.</li>
+            </ul>
+          </div>
+          <div class="ts-section ts-cause">
+            <span class="ts-label">Cause</span>
+            <ul>
+              <li>When a Storage Profile is attached, NCM copies the backup file only if the backup file <strong>version changes</strong>.</li>
+              <li>If there is no configuration change on the device, the version remains the same and the file is not copied again.</li>
+            </ul>
+          </div>
+          <div class="ts-section ts-resolution">
+            <span class="ts-label">Resolution</span>
+            <p><strong>No action required.</strong> This is by design to:</p>
+            <ul>
+              <li>Avoid duplicate file copies</li>
+              <li>Reduce unnecessary storage usage</li>
+              <li>Prevent redundant file transfers</li>
+            </ul>
+            <p>A file will be copied to the storage profile only when:</p>
+            <ul>
+              <li>A configuration change occurs on the device</li>
+              <li>The backup version number increments</li>
+            </ul>
+          </div>
+          <div class="ts-section ts-note">
+            <span class="ts-label">Note</span>
+            <p>If validation is required, verify the current and previous backup versions in NCM before assuming backup failure.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── 10 ── -->
+      <div class="ts-card" data-index="10">
+        <button class="ts-card-hd">
+          <span class="ts-num">10</span>
+          <span class="ts-title">TFTP Requirement for Restore Operation</span>
+          <i data-lucide="chevron-down" class="ts-chevron"></i>
+        </button>
+        <div class="ts-body">
+          <div class="ts-section ts-symptom">
+            <span class="ts-label">Symptom</span>
+            <ul>
+              <li>Restore operation fails even though credentials are correct.</li>
+              <li>Error related to file transfer during restore.</li>
+              <li>Restore does not initiate on the device.</li>
+            </ul>
+          </div>
+          <div class="ts-section ts-cause">
+            <span class="ts-label">Cause</span>
+            <p>A TFTP server must be available for Restore, even if the Credential Profile is set to <em>No Protocol</em>. The device pulls the configuration file from the TFTP server — if the service is not running or not reachable, restore will fail.</p>
+          </div>
+          <div class="ts-section ts-resolution">
+            <span class="ts-label">Resolution</span>
+            <p>Verify the TFTP server is running:</p>
+            <div class="ts-code-wrap"><code class="ts-code">systemctl status tftpd-hpa</code><button class="ts-copy" title="Copy"><i data-lucide="copy"></i></button></div>
+            <p>If not running, start it:</p>
+            <div class="ts-code-wrap"><code class="ts-code">sudo systemctl restart tftpd-hpa</code><button class="ts-copy" title="Copy"><i data-lucide="copy"></i></button></div>
+            <p>Verify TFTP port (UDP 69) is listening:</p>
+            <div class="ts-code-wrap"><code class="ts-code">ss -anu | grep :69</code><button class="ts-copy" title="Copy"><i data-lucide="copy"></i></button></div>
+          </div>
+          <div class="ts-section ts-note">
+            <span class="ts-label">Important</span>
+            <ul>
+              <li>Ensure the network device can reach the TFTP server IP.</li>
+              <li>Confirm no firewall, ACL, or security restrictions block <strong>UDP port 69</strong>.</li>
+              <li>The device must be able to initiate a TFTP connection toward the server.</li>
+              <li>Restore will fail even if authentication succeeds if the device cannot reach the TFTP server.</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── 11 ── -->
+      <div class="ts-card" data-index="11">
+        <button class="ts-card-hd">
+          <span class="ts-num">11</span>
+          <span class="ts-title">SSH Algorithm Negotiation Behavior</span>
+          <i data-lucide="chevron-down" class="ts-chevron"></i>
+        </button>
+        <div class="ts-body">
+          <div class="ts-section ts-symptom">
+            <span class="ts-label">Symptom</span>
+            <ul>
+              <li>Selected SSH algorithms are not fully reflected in handshake logs.</li>
+              <li>Additional algorithms appear during SSH negotiation.</li>
+              <li>Connection succeeds but certain selected algorithms are not visible in logs.</li>
+            </ul>
+          </div>
+          <div class="ts-section ts-cause">
+            <span class="ts-label">Cause</span>
+            <ul>
+              <li>The SSH library may internally append compatible algorithms during negotiation, even if not explicitly selected in the UI.</li>
+              <li>If newer algorithms are selected but not yet supported by the SSH library, the connection may proceed using supported configured algorithms instead.</li>
+              <li>Unsupported or internally handled algorithms may not appear in the handshake logs.</li>
+            </ul>
+          </div>
+          <div class="ts-section ts-resolution">
+            <span class="ts-label">Resolution</span>
+            <p><strong>No action required</strong> if the SSH connection is successful. If verification is needed:</p>
+            <ul>
+              <li>Ensure at least one common algorithm exists between the device and the configured UI settings.</li>
+              <li>Confirm the selected algorithms are supported by the SSH library version in use.</li>
+              <li>Review handshake logs with the understanding that not all internally negotiated algorithms may be displayed.</li>
+            </ul>
+          </div>
+          <div class="ts-section ts-note">
+            <span class="ts-label">Note</span>
+            <p>A successful SSH connection confirms algorithm negotiation completed using mutually supported cryptographic settings, even if some selected algorithms are not explicitly shown in logs.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── 12 ── -->
+      <div class="ts-card" data-index="12">
+        <button class="ts-card-hd">
+          <span class="ts-num">12</span>
+          <span class="ts-title">Enable Command Failure – Prompt Pattern Mismatch</span>
+          <i data-lucide="chevron-down" class="ts-chevron"></i>
+        </button>
+        <div class="ts-body">
+          <div class="ts-section ts-symptom">
+            <span class="ts-label">Symptom</span>
+            <ul>
+              <li>Configuration operation fails at the enable stage.</li>
+              <li>Error message: <code>en command failed, pattern # does not found</code></li>
+            </ul>
+          </div>
+          <div class="ts-section ts-cause">
+            <span class="ts-label">Cause</span>
+            <ul>
+              <li>The device prompt pattern returned after the enable command does not match the OOTB template pattern.</li>
+              <li>For example, the template may expect <code>#</code> but the device returns <code>;</code> or another vendor-specific symbol.</li>
+            </ul>
+          </div>
+          <div class="ts-section ts-resolution">
+            <span class="ts-label">Resolution</span>
+            <ol>
+              <li>Open the <strong>Action History</strong> of the affected device.</li>
+              <li>Review the output of the failed configuration operation.</li>
+              <li>Identify the actual prompt pattern returned by the device after the enable command.</li>
+              <li>Compare it with the pattern defined in the attached template for that device vendor.</li>
+              <li>Replace the expected pattern in the template with the correct prompt pattern observed in the device output.</li>
+            </ol>
+          </div>
+          <div class="ts-section ts-note">
+            <span class="ts-label">Note</span>
+            <p>The enable command relies on accurate prompt pattern matching. If the expected pattern does not match the device's actual prompt, execution will fail even if the command itself is valid.</p>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /ts-list -->
+  </div><!-- /panel-troubleshoot -->
 
   <!-- ═══════════════════════ CHANGELOG ═══════════════════════════════════ -->
   <div class="panel" id="panel-changelog">
@@ -2444,6 +3077,68 @@ function showToast(msg, type)
   {
     if (!localStorage.getItem('ncm-theme')) { applyTheme(e.matches); }
   });
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   TROUBLESHOOT — accordion + search + copy
+═══════════════════════════════════════════════════════════════════════════ */
+
+/* Accordion */
+document.querySelectorAll('.ts-card-hd').forEach(function (hd)
+{
+  hd.addEventListener('click', function ()
+  {
+    var body = hd.parentElement.querySelector('.ts-body');
+    var isOpen = body.classList.contains('open');
+    body.classList.toggle('open', !isOpen);
+  });
+});
+
+/* Search */
+var tsSearch      = document.getElementById('ts-search');
+var tsSearchClear = document.getElementById('ts-search-clear');
+var tsNoResults   = document.getElementById('ts-no-results');
+var tsCards       = document.querySelectorAll('#ts-list .ts-card');
+
+function tsFilter()
+{
+  var q = tsSearch.value.trim().toLowerCase();
+  tsSearchClear.style.display = q ? '' : 'none';
+  var visible = 0;
+  tsCards.forEach(function (card)
+  {
+    var match = !q || card.textContent.toLowerCase().includes(q);
+    card.classList.toggle('ts-hidden', !match);
+    if (match)
+    {
+      visible++;
+      if (q) { card.querySelector('.ts-body').classList.add('open'); }
+    }
+  });
+  tsNoResults.style.display = visible === 0 ? '' : 'none';
+}
+
+tsSearch.addEventListener('input', tsFilter);
+tsSearchClear.addEventListener('click', function ()
+{
+  tsSearch.value = '';
+  tsFilter();
+  tsSearch.focus();
+});
+
+/* Code block copy buttons */
+document.querySelectorAll('.ts-copy').forEach(function (btn)
+{
+  btn.addEventListener('click', function ()
+  {
+    var code = btn.closest('.ts-code-wrap').querySelector('.ts-code');
+    navigator.clipboard.writeText(code.textContent.trim()).then(function ()
+    {
+      var origHTML = btn.innerHTML;
+      btn.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>';
+      setTimeout(function () { btn.innerHTML = origHTML; if (typeof lucide !== 'undefined') { lucide.createIcons({ nodes: [btn] }); } }, 1500);
+    });
+  });
+});
 
   /* Init Lucide icons after DOM is ready */
   if (typeof lucide !== 'undefined') { lucide.createIcons(); }
