@@ -1079,7 +1079,12 @@
     /* Search bar */
     .ts-search-wrap
     {
-      position: relative;
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      background: var(--color-bg-base);
+      padding-top: 8px;
+      margin-top: -8px;
       display: flex;
       align-items: center;
       gap: 8px;
@@ -1296,6 +1301,121 @@
       .diff-line { font-size: 0.8rem; padding: 1px 10px; }
       .epoch-table th, .epoch-table td { padding: 10px 12px; font-size: 0.9rem; }
     }
+
+    /* ── Diff empty state ── */
+    .diff-empty
+    {
+      border: 2px dashed var(--border);
+      border-radius: 7px;
+      color: var(--muted);
+      text-align: center;
+      padding: 40px 20px;
+      margin-top: 16px;
+      font-size: 0.925rem;
+    }
+    .diff-empty svg { display: block; margin: 0 auto 10px; opacity: 0.35; }
+
+    /* ── Diff summary badge ── */
+    .diff-summary
+    {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      margin-left: 8px;
+      font-size: 0.8125rem;
+      font-family: 'DM Mono', monospace;
+    }
+    .ds-add { color: var(--add-fg); background: var(--add-bg); padding: 2px 7px; border-radius: 4px; }
+    .ds-rem { color: var(--rem-fg); background: var(--rem-bg); padding: 2px 7px; border-radius: 4px; }
+
+    /* ── Epoch result card ── */
+    .epoch-result-card
+    {
+      margin-top: 16px;
+      border: 1px solid var(--border);
+      border-left: 3px solid var(--color-accent);
+      border-radius: 7px;
+      overflow: hidden;
+      background: var(--surface);
+    }
+    .epoch-result-card .epoch-table { margin-top: 0; }
+
+    /* ── Diff path label (inline JSON diff) ── */
+    .diff-path-label
+    {
+      display: inline-block;
+      margin-left: 16px;
+      font-size: 0.75rem;
+      color: var(--muted);
+      opacity: 0;
+      transition: opacity .15s;
+      font-style: italic;
+      pointer-events: none;
+    }
+    .diff-line:hover .diff-path-label { opacity: 1; }
+
+    /* ── Decode history dropdown ── */
+    .hist-wrap { position: relative; display: inline-flex; }
+    .hist-menu
+    {
+      display: none;
+      position: absolute;
+      top: calc(100% + 6px);
+      left: 0;
+      min-width: 300px;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      box-shadow: 0 8px 24px rgba(0,0,0,.25);
+      z-index: 200;
+      overflow: hidden;
+    }
+    .hist-menu.open { display: block; }
+    .hist-menu-hdr
+    {
+      padding: 9px 14px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      letter-spacing: .04em;
+      text-transform: uppercase;
+      color: var(--muted);
+      border-bottom: 1px solid var(--border);
+    }
+    .hist-item
+    {
+      padding: 9px 14px;
+      font-size: 0.85rem;
+      font-family: 'DM Mono', monospace;
+      cursor: pointer;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      border-bottom: 1px solid var(--border);
+    }
+    .hist-item:last-child { border-bottom: none; }
+    .hist-item:hover { background: var(--surface); color: var(--color-accent); }
+    .hist-empty { padding: 16px 14px; color: var(--muted); font-size: 0.875rem; text-align: center; }
+
+    /* ── Keyboard shortcut hints ── */
+    .kbd-hint
+    {
+      display: inline-flex;
+      align-items: center;
+      gap: 3px;
+      margin-left: 4px;
+      opacity: 0.55;
+      font-size: 0.75rem;
+    }
+    .kbd-hint kbd
+    {
+      font-family: 'DM Mono', monospace;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 1px 5px;
+      font-size: 0.72rem;
+      line-height: 1.5;
+    }
   </style>
   <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
 </head>
@@ -1347,9 +1467,17 @@
       </div>
     </div>
 
-    <div class="btn-group">
+    <div class="btn-group" style="flex-wrap:wrap;align-items:center">
       <button class="btn btn-primary" id="btn-decode"><i data-lucide="zap"></i> Decode</button>
       <button class="btn btn-ghost" id="btn-decode-clear"><i data-lucide="trash-2"></i> Clear</button>
+      <div class="hist-wrap">
+        <button class="btn btn-icon btn-ghost" id="btn-decode-hist" title="Recent inputs"><i data-lucide="history"></i></button>
+        <div class="hist-menu" id="decode-hist-menu">
+          <div class="hist-menu-hdr">Recent inputs</div>
+          <div id="decode-hist-list"></div>
+        </div>
+      </div>
+      <span class="kbd-hint"><kbd>Ctrl</kbd><kbd>↵</kbd></span>
     </div>
 
     <div class="output-panel">
@@ -1381,17 +1509,20 @@
           <label>Timezone</label>
           <select id="tz-select"></select>
         </div>
-        <div class="btn-group">
+        <div class="btn-group" style="align-items:center">
           <button class="btn btn-primary" id="btn-epoch-convert"><i data-lucide="arrow-right-left"></i> Convert</button>
           <button class="btn" id="btn-epoch-now"><i data-lucide="clock"></i> Now</button>
           <button class="btn btn-icon btn-ghost" id="btn-epoch-clear" title="Clear"><i data-lucide="trash-2"></i></button>
+          <span class="kbd-hint"><kbd>Ctrl</kbd><kbd>↵</kbd></span>
         </div>
         <div id="epoch-result-wrap" style="display:none">
-          <div class="table-scroll">
-            <table class="epoch-table">
-              <thead><tr><th>Format</th><th>Value</th></tr></thead>
-              <tbody id="epoch-rows"></tbody>
-            </table>
+          <div class="epoch-result-card">
+            <div class="table-scroll">
+              <table class="epoch-table">
+                <thead><tr><th>Format</th><th>Value</th></tr></thead>
+                <tbody id="epoch-rows"></tbody>
+              </table>
+            </div>
           </div>
         </div>
       </div>
@@ -1451,13 +1582,16 @@
 
     <hr />
 
-    <div class="btn-group" style="margin-bottom:0">
+    <div class="btn-group" style="margin-bottom:0;flex-wrap:wrap;align-items:center">
       <button class="btn btn-primary" id="btn-diff"><i data-lucide="git-compare"></i> Diff</button>
+      <button class="btn" id="btn-prettify-both"><i data-lucide="wand-2"></i> Prettify both</button>
       <button class="btn btn-icon btn-ghost" id="btn-diff-clear" title="Clear diff"><i data-lucide="trash-2"></i></button>
       <div class="diff-view-toggle" id="diff-view-toggle" style="display:none">
         <button class="on" data-view="inline" title="Inline unified view"><i data-lucide="align-justify"></i> Inline</button>
         <button           data-view="split"  title="Side-by-side split view"><i data-lucide="columns-2"></i> Split</button>
       </div>
+      <span class="diff-summary" id="diff-summary" style="display:none"></span>
+      <span class="kbd-hint"><kbd>Ctrl</kbd><kbd>↵</kbd></span>
     </div>
 
     <div id="diff-result"></div>
@@ -1476,6 +1610,9 @@
     </div>
     <p class="ts-no-results" id="ts-no-results" style="display:none">No matching issues found.</p>
 
+    <div style="display:flex;justify-content:flex-end;margin-bottom:12px">
+      <button class="btn btn-ghost" id="btn-ts-expand-all"><i data-lucide="chevrons-down"></i> <span id="ts-ea-label">Expand all</span></button>
+    </div>
     <div class="ts-list" id="ts-list">
 
       <!-- ── 1 ── -->
@@ -2235,6 +2372,7 @@ document.getElementById('btn-decode').addEventListener('click', function ()
       {
         showResult(out, resultText, 'ok');
       }
+      histSave(document.getElementById('decode-input').value.trim());
     }
     else
     {
@@ -2259,6 +2397,53 @@ document.getElementById('btn-decode').addEventListener('click', function ()
     btn.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg> Decode';
   });
 });
+
+/* ── Decode history (session-scoped) ── */
+var HIST_KEY = 'ncmlab_decode_hist';
+function histLoad() { try { return JSON.parse(sessionStorage.getItem(HIST_KEY) || '[]'); } catch (_) { return []; } }
+function histSave(val)
+{
+  var h = histLoad().filter(function (x) { return x !== val; });
+  h.unshift(val);
+  sessionStorage.setItem(HIST_KEY, JSON.stringify(h.slice(0, 10)));
+  histRender();
+}
+function histRender()
+{
+  var list = document.getElementById('decode-hist-list');
+  var h    = histLoad();
+  if (!h.length)
+  {
+    list.innerHTML = '<div class="hist-empty">No recent inputs this session.</div>';
+    return;
+  }
+  list.innerHTML = h.map(function (v)
+  {
+    return '<div class="hist-item" title="' + htmlEsc(v) + '">' + htmlEsc(v.length > 60 ? v.slice(0, 60) + '…' : v) + '</div>';
+  }).join('');
+  list.querySelectorAll('.hist-item').forEach(function (item, idx)
+  {
+    item.addEventListener('click', function ()
+    {
+      document.getElementById('decode-input').value = h[idx];
+      document.getElementById('decode-hist-menu').classList.remove('open');
+    });
+  });
+}
+
+(function ()
+{
+  var histBtn  = document.getElementById('btn-decode-hist');
+  var histMenu = document.getElementById('decode-hist-menu');
+  histRender();
+  histBtn.addEventListener('click', function (e)
+  {
+    e.stopPropagation();
+    histRender();
+    histMenu.classList.toggle('open');
+  });
+  document.addEventListener('click', function () { histMenu.classList.remove('open'); });
+}());
 
 document.getElementById('btn-decode-clear').addEventListener('click', function ()
 {
@@ -2489,7 +2674,7 @@ function relativeTime(ms)
 document.getElementById('btn-epoch-convert').addEventListener('click', convertEpoch);
 document.getElementById('epoch-input').addEventListener('keydown', function (e)
 {
-  if (e.key === 'Enter') { convertEpoch(); }
+  if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) { convertEpoch(); }
 });
 
 function convertEpoch()
@@ -2723,10 +2908,49 @@ var btnDiffClear = document.getElementById('btn-diff-clear');
 btnDiffClear.disabled = true;
 
 document.getElementById('btn-diff').addEventListener('click', runDiff);
+
+/* Ctrl+Enter on diff textareas triggers diff */
+['input-left', 'input-right'].forEach(function (id)
+{
+  document.getElementById(id).addEventListener('keydown', function (e)
+  {
+    if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) { e.preventDefault(); runDiff(); }
+  });
+});
+
+/* Prettify both sides at once */
+document.getElementById('btn-prettify-both').addEventListener('click', function ()
+{
+  var leftEl  = document.getElementById('input-left');
+  var rightEl = document.getElementById('input-right');
+  var ok = true;
+  [leftEl, rightEl].forEach(function (el)
+  {
+    if (!el.value.trim()) { return; }
+    try
+    {
+      el.value = parseAndFormat(el.value);
+      flashBorder(el, 'var(--success)');
+    }
+    catch (e)
+    {
+      flashBorder(el, 'var(--error)');
+      ok = false;
+    }
+  });
+  if (!ok) { showToast('One or both sides have invalid ' + currentMode.toUpperCase() + ' — check syntax.', 'err'); }
+});
+var DIFF_EMPTY_HTML =
+  '<div class="diff-empty">'
+  + '<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>'
+  + 'Paste content into both sides, then click <strong>Diff</strong> to see changes.'
+  + '</div>';
+
 btnDiffClear.addEventListener('click', function ()
 {
-  document.getElementById('diff-result').innerHTML = '';
+  document.getElementById('diff-result').innerHTML = DIFF_EMPTY_HTML;
   document.getElementById('diff-view-toggle').style.display = 'none';
+  document.getElementById('diff-summary').style.display = 'none';
   btnDiffClear.disabled = true;
   lastDiffLeft  = '';
   lastDiffRight = '';
@@ -2771,6 +2995,12 @@ function renderDiff(left, right)
   toggle.style.display = '';
   btnDiffClear.disabled = false;
 
+  var adds = 0, rems = 0;
+  diff.forEach(function (d) { if (d[0] === 1) { adds++; } else if (d[0] === -1) { rems++; } });
+  var badge = document.getElementById('diff-summary');
+  badge.innerHTML = '<span class="ds-add">+' + adds + '</span><span class="ds-rem">−' + rems + '</span>';
+  badge.style.display = '';
+
   if (diffViewMode === 'split')
   {
     renderSideBySide(diff, container);
@@ -2781,27 +3011,66 @@ function renderDiff(left, right)
   }
 }
 
+function htmlEsc(s)
+{
+  return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+}
+
+/* Compute a dotted JSON key path from an array of lines (with 3-char diff prefix).
+   Scans for key patterns at each indentation level; resets after ··· gap lines. */
+function computeJsonPath(lines)
+{
+  var stack = []; /* [{indent, key}] */
+  for (var i = 0; i < lines.length; i++)
+  {
+    var raw = lines[i];
+    if (raw.indexOf('···') !== -1) { stack = []; continue; }
+    var content = raw.length > 3 ? raw.slice(3) : raw;
+    var indent  = content.length - content.replace(/^\s+/, '').length;
+    var m       = content.match(/^\s*"([^"]+)"\s*:/);
+    if (m)
+    {
+      while (stack.length > 0 && stack[stack.length - 1].indent >= indent)
+      {
+        stack.pop();
+      }
+      stack.push({ indent: indent, key: m[1] });
+    }
+  }
+  return stack.map(function (e) { return e.key; }).join('.');
+}
+
 /* ── Inline (unified) renderer ── */
 function renderInline(diff, container)
 {
-  var collapsed = collapseContext(diff, 3);
-  var jsonDiff  = currentMode === 'json';
-  var html = '<div class="diff-out">';
+  var collapsed  = collapseContext(diff, 3);
+  var jsonDiff   = currentMode === 'json';
+  var html       = '<div class="diff-out">';
+  var seenLines  = [];
+
   collapsed.forEach(function (d)
   {
     var lineHtml = jsonDiff
       ? tokenizeJSON(d[1])
-      : d[1].replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+      : htmlEsc(d[1]);
 
     if (d[0] === 'hdr')
     {
       html += '<div class="diff-line hdr">' + lineHtml + '</div>';
+      seenLines.push('···');
     }
     else
     {
       var cls    = d[0] ===  1 ? 'add' : d[0] === -1 ? 'rem' : 'ctx';
       var prefix = d[0] ===  1 ? '+  ' : d[0] === -1 ? '-  ' : '   ';
-      html += '<div class="diff-line ' + cls + '">' + prefix + lineHtml + '</div>';
+      var pathLabel = '';
+      if (jsonDiff && d[0] !== 0)
+      {
+        var p = computeJsonPath(seenLines.concat([prefix + d[1]]));
+        if (p) { pathLabel = '<span class="diff-path-label">.' + htmlEsc(p) + '</span>'; }
+      }
+      html += '<div class="diff-line ' + cls + '">' + prefix + lineHtml + pathLabel + '</div>';
+      seenLines.push(prefix + d[1]);
     }
   });
   html += '</div>';
@@ -3082,6 +3351,29 @@ function showToast(msg, type)
    TROUBLESHOOT — accordion + search + copy
 ═══════════════════════════════════════════════════════════════════════════ */
 
+/* Expand all / Collapse all */
+(function ()
+{
+  var btn   = document.getElementById('btn-ts-expand-all');
+  var label = document.getElementById('ts-ea-label');
+  var allExpanded = false;
+  btn.addEventListener('click', function ()
+  {
+    allExpanded = !allExpanded;
+    document.querySelectorAll('#ts-list .ts-body').forEach(function (body)
+    {
+      body.classList.toggle('open', allExpanded);
+    });
+    label.textContent = allExpanded ? 'Collapse all' : 'Expand all';
+    var icon = btn.querySelector('svg, i');
+    if (icon)
+    {
+      icon.setAttribute('data-lucide', allExpanded ? 'chevrons-up' : 'chevrons-down');
+      if (typeof lucide !== 'undefined') { lucide.createIcons({ nodes: [btn] }); }
+    }
+  });
+}());
+
 /* Accordion */
 document.querySelectorAll('.ts-card-hd').forEach(function (hd)
 {
@@ -3142,6 +3434,9 @@ document.querySelectorAll('.ts-copy').forEach(function (btn)
 
   /* Init Lucide icons after DOM is ready */
   if (typeof lucide !== 'undefined') { lucide.createIcons(); }
+
+  /* Diff empty state */
+  document.getElementById('diff-result').innerHTML = DIFF_EMPTY_HTML;
 }());
 
 </script>
