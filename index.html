@@ -2036,6 +2036,104 @@ systemctl status vsftpd</code><button class="ts-copy" title="Copy"><i data-lucid
       New features, improvements, fixes, and security updates — newest first.
     </p>
 
+    <!-- ── v3.0 ── -->
+    <article class="release">
+      <header class="release-header">
+        <span class="release-version">v3.0</span>
+        <time class="release-date" datetime="2026-08-10">August 2026</time>
+        <span class="release-label">Troubleshooting &amp; UX</span>
+      </header>
+      <p class="release-tagline">
+        Adds a full NCM Troubleshooting Guide with searchable accordion cards, plus a suite of quality-of-life improvements across all tabs.
+      </p>
+
+      <!-- New features -->
+      <section class="release-group">
+        <h3 class="release-group-title">Features</h3>
+        <ul class="entry-list">
+
+          <li class="entry">
+            <div class="entry-tag-col"><span class="entry-tag entry-tag-new">New</span></div>
+            <div class="entry-content">
+              <p class="entry-headline">NCM Troubleshooting Guide tab</p>
+              <p class="entry-detail">
+                A dedicated <strong>Troubleshoot</strong> tab with structured, searchable resolution cards for seven common NCM issues — SSH connectivity, credential failures, config backup errors, bulk approval workflow, and more. Each card has collapsible Symptom / Cause / Resolution sections with one-click code-block copy. A sticky search bar filters cards in real time; a single <em>Expand all / Collapse all</em> toggle opens or closes every card at once.
+              </p>
+            </div>
+          </li>
+
+          <li class="entry">
+            <div class="entry-tag-col"><span class="entry-tag entry-tag-new">New</span></div>
+            <div class="entry-content">
+              <p class="entry-headline">Decode history dropdown</p>
+              <p class="entry-detail">
+                A history button next to the Decode action stores the last 10 successfully decoded inputs for the current browser session (via <code>sessionStorage</code>). Click any entry to restore it to the input field instantly — no re-pasting needed.
+              </p>
+            </div>
+          </li>
+
+          <li class="entry">
+            <div class="entry-tag-col"><span class="entry-tag entry-tag-new">New</span></div>
+            <div class="entry-content">
+              <p class="entry-headline">Prettify both — single-click formatting</p>
+              <p class="entry-detail">
+                A <strong>Prettify both</strong> button in the JSON / XML tab formats the Left and Right inputs simultaneously, saving a second click before running a diff.
+              </p>
+            </div>
+          </li>
+
+        </ul>
+      </section>
+
+      <!-- UX improvements -->
+      <section class="release-group">
+        <h3 class="release-group-title">User experience</h3>
+        <ul class="entry-list">
+
+          <li class="entry">
+            <div class="entry-tag-col"><span class="entry-tag entry-tag-improved">Improved</span></div>
+            <div class="entry-content">
+              <p class="entry-headline">Diff empty state &amp; change summary</p>
+              <p class="entry-detail">
+                The diff area now shows a dashed placeholder with guidance text before any diff is run, replacing an empty blank space. After diffing, a <strong>+N / −N</strong> badge appears next to the Inline / Split toggle showing how many lines were added and removed.
+              </p>
+            </div>
+          </li>
+
+          <li class="entry">
+            <div class="entry-tag-col"><span class="entry-tag entry-tag-improved">Improved</span></div>
+            <div class="entry-content">
+              <p class="entry-headline">JSON key-path label on diff hover</p>
+              <p class="entry-detail">
+                In inline diff mode, hovering over any changed JSON line reveals a dotted key-path label (e.g. <code>.address.city</code>) computed from the surrounding context, making it immediately clear which nested field changed without manually scanning indentation.
+              </p>
+            </div>
+          </li>
+
+          <li class="entry">
+            <div class="entry-tag-col"><span class="entry-tag entry-tag-improved">Improved</span></div>
+            <div class="entry-content">
+              <p class="entry-headline">Keyboard shortcuts across all tabs</p>
+              <p class="entry-detail">
+                <kbd>Ctrl</kbd>&nbsp;<kbd>↵</kbd> now triggers the primary action on every tab — Decode, Epoch Convert, and Diff. Shortcut hints are displayed inline next to the action buttons.
+              </p>
+            </div>
+          </li>
+
+          <li class="entry">
+            <div class="entry-tag-col"><span class="entry-tag entry-tag-improved">Improved</span></div>
+            <div class="entry-content">
+              <p class="entry-headline">Epoch result card with accent border</p>
+              <p class="entry-detail">
+                The epoch conversion result table is now wrapped in a card with a coloured left border, making it visually distinct from the input fields and easier to scan at a glance.
+              </p>
+            </div>
+          </li>
+
+        </ul>
+      </section>
+    </article>
+
     <!-- ── v2.0 ── -->
     <article class="release">
       <header class="release-header">
